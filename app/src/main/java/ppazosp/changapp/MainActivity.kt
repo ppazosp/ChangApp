@@ -1,20 +1,48 @@
 package ppazosp.changapp
 
-import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.Fragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import ppazosp.changapp.ChatsFragment
+import ppazosp.changapp.ProfileFragment
+import ppazosp.changapp.R
+import ppazosp.changapp.SearchFragment
+import ppazosp.changapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
+
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
+        setUpTabBar()
+
+    }
+
+    private fun setUpTabBar()
+    {
+        binding.bottomNavBar.setOnItemSelectedListener {
+            when(it)
+            {
+                R.id.search -> loadFragment(SearchFragment())
+                R.id.chats -> loadFragment(ChatsFragment())
+                R.id.profile -> loadFragment(ProfileFragment())
+            }
         }
+    }
+
+    private fun loadFragment(fragment: Fragment) {
+
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.frameLayout, fragment)
+        transaction.commit()
     }
 }
