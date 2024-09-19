@@ -3,4 +3,7 @@
     <string name="perfil">Perfil</string>
     <string name="mensajes">Mensajes</string>
     <string name="buscar">Buscar</string>
+    <string name="search_fragment">This is the search fragment</string>
+    <string name="chat_fragment">This is the chat fragment</string>
+    <string name="profile_fragment">This is the profile fragment</string>
 </resources>
