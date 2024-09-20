@@ -1,14 +1,9 @@
 package ppazosp.changapp
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import ppazosp.changapp.ChatsFragment
-import ppazosp.changapp.ProfileFragment
-import ppazosp.changapp.R
-import ppazosp.changapp.SearchFragment
 import ppazosp.changapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
