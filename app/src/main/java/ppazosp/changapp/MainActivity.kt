@@ -4,7 +4,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
+import androidx.viewpager2.widget.ViewPager2
 import ppazosp.changapp.databinding.ActivityMainBinding
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,26 +19,40 @@ class MainActivity : AppCompatActivity() {
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
-        setUpTabBar()
-
+        setUpViewPager()
     }
 
-    private fun setUpTabBar()
-    {
-        binding.bottomNavBar.setOnItemSelectedListener {
-            when(it)
-            {
-                R.id.search -> loadFragment(SearchFragment())
-                R.id.chats -> loadFragment(ChatsFragment())
-                R.id.profile -> loadFragment(ProfileFragment())
+
+    private fun setUpViewPager() {
+
+        val viewPager = binding.viewpager
+        val bottomNav = binding.bottomNavBar
+
+        val adapter = ViewPagerAdapter(this)
+        viewPager.adapter = adapter
+
+        bottomNav.setOnItemSelectedListener { item ->
+            when (item) {
+                R.id.search -> {
+                    viewPager.currentItem = 0
+                }
+                R.id.chats -> {
+                    viewPager.currentItem = 1
+                }
+                R.id.profile -> {
+                    viewPager.currentItem = 2
+                }
             }
         }
-    }
 
-    internal fun loadFragment(fragment: Fragment) {
-
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.frameLayout, fragment)
-        transaction.commit()
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                when (position) {
+                    0 -> bottomNav.setItemSelected(R.id.search)
+                    1 -> bottomNav.setItemSelected(R.id.chats)
+                    2 -> bottomNav.setItemSelected(R.id.profile)
+                }
+            }
+        })
     }
 }

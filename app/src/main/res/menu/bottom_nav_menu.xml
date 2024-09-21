@@ -5,16 +5,16 @@
     <item android:id="@+id/search"
         android:title="@string/buscar"
         android:icon="@drawable/baseline_search_24"
-        app:cnb_iconColor="#2196F3"/>
+        app:cnb_iconColor="@color/dark_grey"/>
 
     <item android:id="@+id/chats"
         android:title="@string/mensajes"
         android:icon="@drawable/baseline_chat_24"
-        app:cnb_iconColor="#4CAF50"/>
+        app:cnb_iconColor="@color/dark_grey"/>
 
     <item android:id="@+id/profile"
         android:title="@string/perfil"
         android:icon="@drawable/baseline_person_24"
-        app:cnb_iconColor="#FF9800"/>
+        app:cnb_iconColor="@color/dark_grey"/>
 
 </menu>
