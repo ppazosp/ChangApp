@@ -23,7 +23,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
             <Spinner
                 android:id="@+id/spinner_provincia"
@@ -86,18 +86,29 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/spinner_activity" />
 
-            <LinearLayout
-                android:id="@+id/results_container"
+            <ScrollView
+                android:id="@+id/results_container_scroll"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="40dp"
                 android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/fragment_layout_background"
                 android:orientation="vertical"
-                app:layout_constraintBottom_toTopOf="@+id/button_search"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/spinner_activity" />
+                app:layout_constraintTop_toBottomOf="@+id/spinner_activity"
+                tools:visibility="gone">
+
+                <LinearLayout
+                    android:id="@+id/results_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/fragment_layout_background"
+                    android:orientation="vertical" />
+            </ScrollView>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </FrameLayout>

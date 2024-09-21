@@ -11,7 +11,9 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.Spinner
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 
 class SearchFragment : Fragment() {
@@ -37,10 +39,17 @@ class SearchFragment : Fragment() {
         setupSpinner(spinnerProvincias, spinnerActivities)
 
         searchButton.setOnClickListener {
-            //resultsContainer.visibility = View.VISIBLE
 
-            //val resultView = LayoutInflater.from(context).inflate(R.layout.result_item, resultsContainer, false)
-            //resultsContainer.addView(resultView)
+            for(i in 1..20)
+            {
+                val resultView = LayoutInflater.from(context).inflate(R.layout.result_item, resultsContainer, false)
+                resultView.findViewById<TextView>(R.id.title).text = "Prueba"+i
+                resultsContainer.addView(resultView)
+            }
+
+            resultsContainer.visibility = View.VISIBLE
+
+
 
             val screenHeight = resources.displayMetrics.heightPixels
 
