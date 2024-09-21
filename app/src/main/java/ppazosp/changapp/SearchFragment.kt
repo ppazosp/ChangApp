@@ -19,8 +19,7 @@ class SearchFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_search, container, false)
 
-        val spinnerProvincias: Spinner = view.findViewById(R.id.spinner_cities)
-
+        val spinnerProvincias: Spinner = view.findViewById(R.id.spinner_provincia)
 
         val provincias = listOf(
             "--Seleccionar--",
@@ -72,18 +71,53 @@ class SearchFragment : Fragment() {
             "Zaragoza"
         )
 
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, provincias)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerProvincias.adapter = adapter
+        val spinnerActivities: Spinner = view.findViewById(R.id.spinner_activity)
 
-        spinnerProvincias.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        val activities = listOf(
+            "--Seleccionar--",
+
+            "Fútbol",
+            "Baloncesto",
+            "Pádel",
+            "Tenis",
+            "Running",
+            "Ciclismo",
+            "Natación",
+            "Balonmano",
+            "Voleibol",
+            "Golf"
+        )
+
+        val adapterProvincias = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, provincias)
+        adapterProvincias.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerProvincias.adapter = adapterProvincias
+
+        val adapterActivities = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, activities)
+        adapterActivities.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerActivities.adapter = adapterActivities
+
+        /*spinnerProvincias.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val provinciaSeleccionada = provincias[position]
-                Toast.makeText(requireContext(), "Selected: $provinciaSeleccionada", Toast.LENGTH_SHORT).show()
+                val selectedProvincia = provincias[position]
+
+                if(selectedProvincia.equals("--Seleccionar--")) return
+
+                val searchResultFragment: Fragment = SearchResultsFragment()
+                val bundle = Bundle()
+                bundle.putString(
+                    "selectedProvincia",
+                    selectedProvincia
+                )
+                searchResultFragment.arguments = bundle
+
+                if (activity is MainActivity) {
+                    (activity as MainActivity?)!!.loadFragment(searchResultFragment)
+                }
+                Toast.makeText(requireContext(), "Selected: $selectedProvincia", Toast.LENGTH_SHORT).show()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {}
-        }
+        }*/
 
         return view
     }
