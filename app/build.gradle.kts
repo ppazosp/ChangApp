@@ -53,5 +53,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation ("com.github.ismaeldivita:chip-navigation-bar:1.3.4")
+    implementation ("androidx.viewpager2:viewpager2:1.0.0")
+    implementation ("com.google.android.material:material:1.4.0")
 
 }

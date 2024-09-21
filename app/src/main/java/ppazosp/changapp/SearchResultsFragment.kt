@@ -20,10 +20,11 @@ class SearchResultsFragment : Fragment() {
         val bundle = arguments
         if (bundle != null) {
             val selectedProvincia = bundle.getString("selectedProvincia")
+            val selectedActivity = bundle.get("selectedActivity")
 
             val provinciaTextView =
                 view.findViewById<TextView>(R.id.selected_provincia)
-            provinciaTextView.text = selectedProvincia
+            provinciaTextView.text = "$selectedProvincia $selectedActivity"
         }
 
         return view

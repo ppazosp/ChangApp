@@ -6,11 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 
 class SearchFragment : Fragment() {
+
+    private var selectedProvincia : String = ""
+    private var selectedActivity : String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -96,28 +100,40 @@ class SearchFragment : Fragment() {
         adapterActivities.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerActivities.adapter = adapterActivities
 
-        /*spinnerProvincias.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        val searchButton: Button = view.findViewById(R.id.button_search)
+
+        spinnerProvincias.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val selectedProvincia = provincias[position]
-
-                if(selectedProvincia.equals("--Seleccionar--")) return
-
-                val searchResultFragment: Fragment = SearchResultsFragment()
-                val bundle = Bundle()
-                bundle.putString(
-                    "selectedProvincia",
-                    selectedProvincia
-                )
-                searchResultFragment.arguments = bundle
-
-                if (activity is MainActivity) {
-                    (activity as MainActivity?)!!.loadFragment(searchResultFragment)
-                }
-                Toast.makeText(requireContext(), "Selected: $selectedProvincia", Toast.LENGTH_SHORT).show()
+                selectedProvincia = provincias[position]
             }
-
             override fun onNothingSelected(parent: AdapterView<*>) {}
-        }*/
+        }
+
+        spinnerActivities.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                selectedActivity = activities[position]
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {
+            }
+        }
+
+        searchButton.setOnClickListener {
+            val searchResultFragment: Fragment = SearchResultsFragment()
+            val bundle = Bundle()
+            bundle.putString(
+                "selectedProvincia",
+                selectedProvincia
+            )
+            bundle.putString(
+                "selectedActivity",
+                selectedActivity
+            )
+            searchResultFragment.arguments = bundle
+
+            if (activity is MainActivity) {
+                (activity as MainActivity?)!!.loadFragment(searchResultFragment)
+            }
+        }
 
         return view
     }
