@@ -148,14 +148,16 @@ class SearchFragment : Fragment() {
         val adapterProvincias = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, provincias)
         adapterProvincias.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerProvincias.adapter = adapterProvincias
+        spinnerProvincias.setSelection(0)
 
         val adapterActivities = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, activities)
         adapterActivities.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerActivities.adapter = adapterActivities
+        spinnerActivities.setSelection(0)
 
 
         spinnerProvincias.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 selectedProvincia = provincias[position]
 
                 if(firstSearchDone) search(selectedProvincia, selectedActivity)
@@ -164,7 +166,7 @@ class SearchFragment : Fragment() {
         }
 
         spinnerActivities.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 selectedActivity = activities[position]
 
                 if (firstSearchDone) search(selectedProvincia, selectedActivity)
