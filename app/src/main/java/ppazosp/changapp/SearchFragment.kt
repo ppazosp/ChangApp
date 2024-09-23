@@ -219,8 +219,8 @@ class SearchFragment : Fragment() {
         for(advert in adverts)
         {
             val resultView = LayoutInflater.from(context).inflate(R.layout.result_item, resultsContainer, false)
-            resultView.findViewById<TextView>(R.id.title).text = advert.title
-            resultView.findViewById<TextView>(R.id.description).text = advert.description
+            //resultView.findViewById<TextView>(R.id.title).text = advert.title
+            //resultView.findViewById<TextView>(R.id.description).text = advert.description
             resultsContainer?.addView(resultView)
         }
     }
