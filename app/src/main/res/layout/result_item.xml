@@ -8,30 +8,32 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_marginVertical="20dp"
+        android:background="@drawable/item_background"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/item_background"
-        android:layout_marginVertical="20dp">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/title"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Prueba"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:layout_marginVertical="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="1"
             android:gravity="center_vertical"
-            android:textColor="@color/black"/>
+            android:text="PRUEBA"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/description"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:layout_marginVertical="10dp"
+            android:layout_marginBottom="10dp"
             android:layout_weight="4"
             android:gravity="center_vertical"
             android:text="Estos es una prueba para ver como queda la busqueda de anuncios"

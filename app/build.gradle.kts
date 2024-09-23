@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+
+    kotlin("plugin.serialization") version "2.0.10"
 }
 
 android {
@@ -55,5 +57,9 @@ dependencies {
     implementation ("com.github.ismaeldivita:chip-navigation-bar:1.3.4")
     implementation ("androidx.viewpager2:viewpager2:1.0.0")
     implementation ("com.google.android.material:material:1.4.0")
+
+    implementation(platform("io.github.jan-tennert.supabase:bom:2.6.1"))
+    implementation("io.github.jan-tennert.supabase:postgrest-kt")
+    implementation("io.ktor:ktor-client-android:2.3.12")
 
 }
