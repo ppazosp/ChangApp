@@ -1,9 +1,11 @@
 package ppazosp.changapp
 
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.media.Image
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -13,11 +15,13 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +32,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class User(
     val id: Int,
-    val name: String
+    val fullname: String,
+    val socials: String
 )
 
 @Serializable
@@ -49,7 +54,8 @@ data class Advert(
     val sport: Int,
     val place: Int,
     val title: String,
-    val description: String
+    val description: String,
+    val image: String
 )
 
 class SearchFragment : Fragment() {
@@ -214,6 +220,13 @@ class SearchFragment : Fragment() {
         }
     }
 
+    private suspend fun fetchUser(id: Int): User
+    {
+        return withContext(Dispatchers.IO) {
+            supabase.from("users").select{filter { User::id eq id  }}.decodeSingle()
+        }
+    }
+
     private suspend fun search()
     {
         resultsContainer?.removeAllViews()
@@ -221,7 +234,26 @@ class SearchFragment : Fragment() {
         val adverts: List<Advert> = fetchAdverts(selectedPlace, selectedSport)
         for(advert in adverts)
         {
+            val user = fetchUser(advert.user)
+
             val resultView = LayoutInflater.from(context).inflate(R.layout.result_item, resultsContainer, false)
+            val titleView = resultView.findViewById<TextView>(R.id.title)
+            val descriptionView = resultView.findViewById<TextView>(R.id.description)
+            val fullnameView = resultView.findViewById<TextView>(R.id.name)
+            val socialsView = resultView.findViewById<TextView>(R.id.socials)
+            val picView = resultView.findViewById<ImageView>(R.id.pic)
+
+            titleView.text = advert.title
+            descriptionView.text = advert.description
+            fullnameView.text = user.fullname
+            val socialsText = "@" + user.socials
+            socialsView.text = socialsText
+            context?.let {
+                Glide.with(it)
+                    .load(advert.image)
+                    .into(picView)
+            }
+
             copyTextOnTouch(resultView.findViewById(R.id.socials))
             resultsContainer?.addView(resultView)
         }

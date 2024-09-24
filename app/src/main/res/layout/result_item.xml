@@ -8,6 +8,7 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:background="@drawable/item_background_dark"
         android:orientation="horizontal"
         android:paddingHorizontal="10dp"
@@ -27,7 +28,7 @@
                 android:layout_height="86dp"
                 android:layout_gravity="center|top"
                 android:scaleType="centerCrop"
-                android:src="@drawable/linkedin_profilepic" />
+                android:src="@drawable/baseline_person_24" />
 
             <TextView
                 android:id="@+id/name"
@@ -36,7 +37,7 @@
                 android:layout_marginTop="5dp"
                 android:gravity="center|top"
                 android:singleLine="false"
-                android:text="Pablo Pazos Parada"
+                android:text="XXX"
                 android:textColor="@color/white"
                 android:textSize="10sp" />
 
@@ -47,7 +48,7 @@
                 android:layout_marginBottom="5dp"
                 android:gravity="center|bottom"
                 android:singleLine="true"
-                android:text="\@pasoinformaticausc"
+                android:text="\xxx"
                 android:textColor="@color/white"
                 android:textSize="10sp" />
         </LinearLayout>
@@ -69,7 +70,7 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
                 android:gravity="center_vertical"
-                android:text="PRUEBA"
+                android:text="XXX"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
@@ -80,7 +81,7 @@
                 android:layout_marginHorizontal="10dp"
                 android:layout_marginBottom="10dp"
                 android:gravity="center_vertical"
-                android:text="Estos es una prueba para ver como queda la busqueda de anuncios Estos es una prueba para ver como queda la busqueda de anuncios "
+                android:text="xxx"
                 android:textColor="@color/black"
                 android:textSize="12sp" />
 
