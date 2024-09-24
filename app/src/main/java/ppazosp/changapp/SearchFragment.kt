@@ -1,6 +1,9 @@
 package ppazosp.changapp
 
 import android.animation.ValueAnimator
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -13,6 +16,7 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.CoroutineScope
@@ -160,8 +164,7 @@ class SearchFragment : Fragment() {
             sports = listOf(defaultSport) + sports
             places = listOf(defaultPlace) + places
 
-
-            updateAdapters()
+            if(isAdded) updateAdapters()
         }
     }
 
@@ -219,9 +222,18 @@ class SearchFragment : Fragment() {
         for(advert in adverts)
         {
             val resultView = LayoutInflater.from(context).inflate(R.layout.result_item, resultsContainer, false)
-            //resultView.findViewById<TextView>(R.id.title).text = advert.title
-            //resultView.findViewById<TextView>(R.id.description).text = advert.description
+            copyTextOnTouch(resultView.findViewById(R.id.socials))
             resultsContainer?.addView(resultView)
+        }
+    }
+
+    fun copyTextOnTouch(textView: TextView) {
+        textView.setOnClickListener {
+            val clipboard = textView.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("Copied Text", textView.text.toString())
+            clipboard.setPrimaryClip(clip)
+
+            Toast.makeText(textView.context, "Text copied to clipboard!", Toast.LENGTH_SHORT).show()
         }
     }
 
