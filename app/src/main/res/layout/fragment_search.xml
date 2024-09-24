@@ -6,19 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
-        android:backgroundTint="@color/dark_grey"
-        android:clickable="true"
-        android:elevation="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/baseline_add_24" />
-
     <FrameLayout
         android:id="@+id/miniframe"
         android:layout_width="0dp"
@@ -87,7 +74,7 @@
             <Button
                 android:id="@+id/button_search"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="150dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="150dp"
@@ -97,7 +84,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/spinner_activity" />
+                app:layout_constraintTop_toBottomOf="@+id/spinner_activity"
+                android:textAllCaps="false" />
 
             <ScrollView
                 android:id="@+id/results_container_scroll"
@@ -121,6 +109,20 @@
                     android:background="@drawable/fragment_layout_background"
                     android:orientation="vertical" />
             </ScrollView>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
+                android:backgroundTint="@color/dark_grey"
+                android:clickable="true"
+                android:elevation="20dp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:srcCompat="@drawable/baseline_add_24" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </FrameLayout>

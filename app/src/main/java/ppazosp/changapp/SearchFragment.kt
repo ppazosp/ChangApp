@@ -5,6 +5,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -24,6 +25,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
@@ -57,7 +59,7 @@ data class Advert(
     val image: String
 )
 
-class SearchFragment : Fragment() {
+class SearchFragment : Fragment(), OnDialogDismissedListener {
 
     private var sports: List<Sport> = emptyList()
     private var places: List<Place> = emptyList()
@@ -67,6 +69,8 @@ class SearchFragment : Fragment() {
 
     private var selectedPlace: Place? = null
     private var selectedSport: Sport? = null
+
+    private var fab: FloatingActionButton? = null
     
     private var resultsContainer: LinearLayout? = null
 
@@ -81,7 +85,7 @@ class SearchFragment : Fragment() {
 
         val searchButton: Button = view.findViewById(R.id.button_search)
         val miniframe: FrameLayout = view.findViewById(R.id.miniframe)
-        val fab: FloatingActionButton = view.findViewById(R.id.fab)
+        fab = view.findViewById(R.id.fab)
 
         spinnerPlaces = view.findViewById(R.id.spinner_provincia)
         spinnerSports = view.findViewById(R.id.spinner_activity)
@@ -98,19 +102,23 @@ class SearchFragment : Fragment() {
 
             animateMiniframe(miniframe)
 
-            fab.bringToFront()
-
             searchButton.visibility = View.GONE
+            if(selectedPlace?.id!=-1 && selectedSport?.id!=-1) fab?.visibility = View.VISIBLE
             firstSearchDone = true
         }
 
-        fab.setOnClickListener {
-            val dialogInsert = InsertAdvertDialog()
-            dialogInsert.show(requireActivity().supportFragmentManager, "Crear anuncio")
-
+        fab?.setOnClickListener {
+            val dialogInsert = InsertAdvertDialog.newInstance(selectedPlace!!.id, selectedSport!!.id)
+            dialogInsert.setOnDialogDismissedListener(this)
+            dialogInsert.show(childFragmentManager, "Crear anuncio")
         }
 
         return view
+    }
+
+    override fun onDialogDismissed() {
+        CoroutineScope(Dispatchers.Main).launch { search() }
+        Log.e("called", "called")
     }
 
     private fun animateMiniframe(miniframe: FrameLayout) {
@@ -138,7 +146,11 @@ class SearchFragment : Fragment() {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 selectedPlace = places[position]
 
-                if(firstSearchDone) { CoroutineScope(Dispatchers.Main).launch { search() } }
+                if(firstSearchDone) { CoroutineScope(Dispatchers.Main).launch {
+                    search()
+                    if(selectedPlace?.id!=-1 && selectedSport?.id!=-1) fab?.visibility = View.VISIBLE
+                    else fab?.visibility = View.INVISIBLE
+                } }
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
@@ -147,7 +159,10 @@ class SearchFragment : Fragment() {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 selectedSport = sports[position]
 
-                if (firstSearchDone) { CoroutineScope(Dispatchers.Main).launch { search() } }
+                if (firstSearchDone) { CoroutineScope(Dispatchers.Main).launch {
+                    search()
+                    if(selectedPlace?.id!=-1 && selectedSport?.id!=-1) fab?.visibility = View.VISIBLE
+                    else fab?.visibility = View.INVISIBLE} }
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
