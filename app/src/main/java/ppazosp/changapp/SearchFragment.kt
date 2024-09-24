@@ -1,11 +1,9 @@
 package ppazosp.changapp
 
 import android.animation.ValueAnimator
-import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.media.Image
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -22,6 +20,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -82,6 +81,7 @@ class SearchFragment : Fragment() {
 
         val searchButton: Button = view.findViewById(R.id.button_search)
         val miniframe: FrameLayout = view.findViewById(R.id.miniframe)
+        val fab: FloatingActionButton = view.findViewById(R.id.fab)
 
         spinnerPlaces = view.findViewById(R.id.spinner_provincia)
         spinnerSports = view.findViewById(R.id.spinner_activity)
@@ -98,8 +98,16 @@ class SearchFragment : Fragment() {
 
             animateMiniframe(miniframe)
 
+            fab.bringToFront()
+
             searchButton.visibility = View.GONE
             firstSearchDone = true
+        }
+
+        fab.setOnClickListener {
+            val dialogInsert = InsertAdvertDialog()
+            dialogInsert.show(requireActivity().supportFragmentManager, "Crear anuncio")
+
         }
 
         return view
@@ -238,7 +246,7 @@ class SearchFragment : Fragment() {
 
             val resultView = LayoutInflater.from(context).inflate(R.layout.result_item, resultsContainer, false)
             val titleView = resultView.findViewById<TextView>(R.id.title)
-            val descriptionView = resultView.findViewById<TextView>(R.id.description)
+            val descriptionView = resultView.findViewById<TextView>(R.id.title_input)
             val fullnameView = resultView.findViewById<TextView>(R.id.name)
             val socialsView = resultView.findViewById<TextView>(R.id.socials)
             val picView = resultView.findViewById<ImageView>(R.id.pic)
@@ -259,7 +267,7 @@ class SearchFragment : Fragment() {
         }
     }
 
-    fun copyTextOnTouch(textView: TextView) {
+    private fun copyTextOnTouch(textView: TextView) {
         textView.setOnClickListener {
             val clipboard = textView.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("Copied Text", textView.text.toString())
