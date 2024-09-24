@@ -28,6 +28,7 @@
                 android:layout_height="86dp"
                 android:layout_gravity="center|top"
                 android:scaleType="centerCrop"
+                android:background="@drawable/item_background"
                 android:src="@drawable/baseline_person_24" />
 
             <TextView
