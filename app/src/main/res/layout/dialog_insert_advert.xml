@@ -104,13 +104,13 @@
             android:id="@+id/pic_add"
             android:layout_width="86dp"
             android:layout_height="86dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="30dp"
+            android:background="@color/dark_grey"
+            android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/window_title"
-            android:scaleType="centerCrop"
+            app:layout_constraintTop_toBottomOf="@+id/spinner_sports"
             app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Small"
-            android:background="@color/dark_grey"
             app:srcCompat="@drawable/default_image" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -124,6 +124,28 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/pic_add"
             app:srcCompat="@drawable/baseline_add_a_photo_24" />
+
+        <Spinner
+            android:id="@+id/spinner_places"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/window_title" />
+
+        <Spinner
+            android:id="@+id/spinner_sports"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/spinner_places" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

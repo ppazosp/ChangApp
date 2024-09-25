@@ -21,6 +21,7 @@ import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -106,6 +107,8 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
             searchButton.visibility = View.GONE
             if(selectedPlace?.id!=-1 && selectedSport?.id!=-1) fab?.visibility = View.VISIBLE
             firstSearchDone = true
+
+            fab?.visibility = View.VISIBLE
         }
 
         fab?.setOnClickListener {
@@ -147,11 +150,7 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 selectedPlace = places[position]
 
-                if(firstSearchDone) { CoroutineScope(Dispatchers.Main).launch {
-                    search()
-                    if(selectedPlace?.id!=-1 && selectedSport?.id!=-1) fab?.visibility = View.VISIBLE
-                    else fab?.visibility = View.INVISIBLE
-                } }
+                if(firstSearchDone) { CoroutineScope(Dispatchers.Main).launch { search() } }
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
@@ -160,10 +159,7 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 selectedSport = sports[position]
 
-                if (firstSearchDone) { CoroutineScope(Dispatchers.Main).launch {
-                    search()
-                    if(selectedPlace?.id!=-1 && selectedSport?.id!=-1) fab?.visibility = View.VISIBLE
-                    else fab?.visibility = View.INVISIBLE} }
+                if (firstSearchDone) { CoroutineScope(Dispatchers.Main).launch { search() } }
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
@@ -268,6 +264,7 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
             val descriptionView = resultView.findViewById<TextView>(R.id.title_input)
             val fullnameView = resultView.findViewById<TextView>(R.id.name)
             val socialsView = resultView.findViewById<TextView>(R.id.socials)
+            val placeView = resultView.findViewById<TextView>(R.id.place)
             val picView = resultView.findViewById<ImageView>(R.id.pic)
 
             val linerLayout = resultView.findViewById<LinearLayout>(R.id.linearLayout)
@@ -279,6 +276,7 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
             fullnameView.text = user.fullname
             val socialsText = "@" + user.socials
             socialsView.text = socialsText
+            placeView.text = spinnerPlaces!!.getItemAtPosition(advert.place) as String
             if (advert.image != null ) setImageFromBase64(picView, advert.image)
 
             copyTextOnTouch(resultView.findViewById(R.id.socials))

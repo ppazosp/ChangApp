@@ -9,8 +9,11 @@ import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.Spinner
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
@@ -30,6 +33,12 @@ interface OnDialogDismissedListener {
 class InsertAdvertDialog : DialogFragment() {
 
     private var listener: OnDialogDismissedListener? = null
+
+    private var sports: List<Sport> = emptyList()
+    private var places: List<Place> = emptyList()
+
+    private var spinnerPlaces: Spinner? = null
+    private var spinnerSports: Spinner? = null
 
     private var selectedPlaceID: Int = -1
     private var selectedSportID: Int = -1
@@ -82,6 +91,13 @@ class InsertAdvertDialog : DialogFragment() {
         title_input = view.findViewById(R.id.title_input)
         description_input = view.findViewById(R.id.description_input)
         image_input = view.findViewById(R.id.pic_add)
+
+        spinnerPlaces = view.findViewById(R.id.spinner_places)
+        spinnerSports = view.findViewById(R.id.spinner_sports)
+
+        fetchSpinners()
+        spinnerPlaces!!.setSelection(selectedPlaceID)
+        spinnerSports!!.setSelection(selectedSportID)
 
         val createButton = view.findViewById<Button>(R.id.delete_button)
         val cancelButton = view.findViewById<Button>(R.id.cancel_button)
@@ -138,8 +154,8 @@ class InsertAdvertDialog : DialogFragment() {
 
         val add = Advert(
             user = 1,
-            sport = selectedSportID,
-            place = selectedPlaceID,
+            sport = spinnerSports!!.selectedItemPosition,
+            place = spinnerPlaces!!.selectedItemPosition,
             title = title,
             description = description,
             image = imageBase64
@@ -161,5 +177,48 @@ class InsertAdvertDialog : DialogFragment() {
         bitmap.compress(Bitmap.CompressFormat.JPEG, quality, stream)
 
         return stream.toByteArray()
+    }
+
+    private fun updateAdapters() {
+
+        val adapterProvincias = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, places.map { it.name })
+        adapterProvincias.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerPlaces?.adapter = adapterProvincias
+        spinnerPlaces?.setSelection(0)
+
+        val adapterSports = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, sports.map { it.name })
+        adapterSports.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerSports?.adapter = adapterSports
+        spinnerSports?.setSelection(0)
+    }
+
+    private fun fetchSpinners()
+    {
+        CoroutineScope(Dispatchers.Main).launch {
+            sports = fetchSports()
+            places = fetchPlaces()
+
+            val defaultSport = Sport(id = -1, name = "--Seleccionar--")
+            val defaultPlace = Place(id = -1, name = "--Seleccionar--")
+
+            sports = listOf(defaultSport) + sports
+            places = listOf(defaultPlace) + places
+
+            if(isAdded) updateAdapters()
+        }
+    }
+
+    private suspend fun fetchSports(): List<Sport>
+    {
+        return withContext(Dispatchers.IO) {
+            supabase.from("sports").select().decodeList<Sport>()
+        }
+    }
+
+    private suspend fun fetchPlaces(): List<Place>
+    {
+        return withContext(Dispatchers.IO) {
+            supabase.from("places").select().decodeList<Place>()
+        }
     }
 }
