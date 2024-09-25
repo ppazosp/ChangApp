@@ -4,7 +4,9 @@ import android.animation.ValueAnimator
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -25,7 +27,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
@@ -56,7 +57,7 @@ data class Advert(
     val place: Int,
     val title: String,
     val description: String,
-    val image: String
+    val image: String?
 )
 
 class SearchFragment : Fragment(), OnDialogDismissedListener {
@@ -260,26 +261,50 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
             val user = fetchUser(advert.user)
 
             val resultView = LayoutInflater.from(context).inflate(R.layout.result_item, resultsContainer, false)
+
+            val userView = resultView.findViewById<TextView>(R.id.userID)
+
             val titleView = resultView.findViewById<TextView>(R.id.title)
             val descriptionView = resultView.findViewById<TextView>(R.id.title_input)
             val fullnameView = resultView.findViewById<TextView>(R.id.name)
             val socialsView = resultView.findViewById<TextView>(R.id.socials)
             val picView = resultView.findViewById<ImageView>(R.id.pic)
 
+            val linerLayout = resultView.findViewById<LinearLayout>(R.id.linearLayout)
+
+            userView.text = advert.user.toString()
+
             titleView.text = advert.title
             descriptionView.text = advert.description
             fullnameView.text = user.fullname
             val socialsText = "@" + user.socials
             socialsView.text = socialsText
-            context?.let {
-                Glide.with(it)
-                    .load(advert.image)
-                    .into(picView)
-            }
+            if (advert.image != null ) setImageFromBase64(picView, advert.image)
 
             copyTextOnTouch(resultView.findViewById(R.id.socials))
+
+            if(advert.user == MY_ID)
+            {
+                linerLayout.setOnClickListener {
+                    val dialogDelete = DeleteAdvertDialog.newInstance(MY_ID, advert.place, advert.sport)
+                    dialogDelete.setOnDialogDismissedListener(this)
+                    dialogDelete.show(childFragmentManager, "Eliminar anuncio")
+                }
+            }
+
             resultsContainer?.addView(resultView)
+
+            animateResultItem(resultView)
         }
+    }
+
+    private fun animateResultItem(resultItem: View) {
+
+        resultItem.scaleX = 0f
+
+        resultItem.visibility = View.VISIBLE
+
+        resultItem.animate().scaleX(1f).setDuration(1000).start()
     }
 
     private fun copyTextOnTouch(textView: TextView) {
@@ -292,5 +317,16 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
         }
     }
 
+    private fun base64ToByteArray(base64String: String): ByteArray {
+        return Base64.decode(base64String, Base64.NO_WRAP)
+    }
+
+    private fun setImageFromBase64(imageView: ImageView, base64String: String?) {
+        base64String?.let {
+            val imageBytes = base64ToByteArray(it)
+            val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+            imageView.setImageBitmap(bitmap)
+        }
+    }
 
 }

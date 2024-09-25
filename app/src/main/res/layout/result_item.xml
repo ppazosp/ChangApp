@@ -3,9 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_gravity="center">
+
+    <TextView
+        android:id="@+id/userID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="49dp"
+        android:layout_marginTop="53dp"
+        android:layout_weight="1"
+        android:text="-1"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -22,14 +36,15 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/pic"
                 android:layout_width="86dp"
                 android:layout_height="86dp"
                 android:layout_gravity="center|top"
+                android:background="@color/white"
                 android:scaleType="centerCrop"
-                android:background="@drawable/item_background"
-                android:src="@drawable/baseline_person_24" />
+                android:src="@drawable/default_image"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Small" />
 
             <TextView
                 android:id="@+id/name"
