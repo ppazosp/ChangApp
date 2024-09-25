@@ -96,8 +96,6 @@ class InsertAdvertDialog : DialogFragment() {
         spinnerSports = view.findViewById(R.id.spinner_sports)
 
         fetchSpinners()
-        spinnerPlaces!!.setSelection(selectedPlaceID)
-        spinnerSports!!.setSelection(selectedSportID)
 
         val createButton = view.findViewById<Button>(R.id.delete_button)
         val cancelButton = view.findViewById<Button>(R.id.cancel_button)
