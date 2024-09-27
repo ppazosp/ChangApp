@@ -39,6 +39,22 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <TextView
+                android:id="@+id/email_view"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:gravity="start|center"
+                android:paddingHorizontal="5dp"
+                android:text="email"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/window_title" />
+
             <EditText
                 android:id="@+id/fullname_view"
                 android:layout_width="0dp"
@@ -55,7 +71,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.495"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/window_title" />
+                app:layout_constraintTop_toBottomOf="@+id/email_view" />
 
             <EditText
                 android:id="@+id/socials_view"
@@ -91,7 +107,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/socials_view" />
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/save_button"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:layout_marginStart="20dp"
@@ -105,7 +121,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/password_view" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/floatingActionButton"
+                android:id="@+id/fab_delete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="20dp"
@@ -116,17 +132,18 @@
                 app:elevation="5dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/button" />
+                app:layout_constraintTop_toBottomOf="@+id/save_button" />
 
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="68dp"
+                android:layout_marginTop="125dp"
                 android:layout_marginEnd="10dp"
                 android:src="@drawable/baseline_person_24"
                 app:layout_constraintEnd_toStartOf="@+id/fullname_view"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -139,6 +156,7 @@
                 android:layout_marginEnd="10dp"
                 android:src="@drawable/baseline_share_24"
                 app:layout_constraintEnd_toStartOf="@+id/socials_view"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
@@ -147,15 +165,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="24dp"
                 android:layout_marginEnd="10dp"
                 android:src="@drawable/baseline_lock_24"
                 app:layout_constraintEnd_toStartOf="@+id/password_view"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/floatingActionButton2"
+                android:id="@+id/fab_logout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
@@ -166,7 +185,7 @@
                 android:src="@drawable/baseline_logout_24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/button" />
+                app:layout_constraintTop_toBottomOf="@+id/save_button" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

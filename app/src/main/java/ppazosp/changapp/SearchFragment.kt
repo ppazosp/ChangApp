@@ -31,12 +31,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
+import java.io.StringBufferInputStream
 
 @Serializable
 data class User(
     val id: Int,
+    val email: String,
     val fullname: String,
-    val socials: String
+    val socials: String,
+    val password: String
 )
 
 @Serializable
@@ -281,10 +284,10 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
 
             copyTextOnTouch(resultView.findViewById(R.id.socials))
 
-            if(advert.user == MY_ID)
+            if(advert.user == myUser.id)
             {
                 linerLayout.setOnClickListener {
-                    val dialogDelete = DeleteAdvertDialog.newInstance(MY_ID, advert.place, advert.sport)
+                    val dialogDelete = DeleteAdvertDialog.newInstance(myUser.id, advert.place, advert.sport)
                     dialogDelete.setOnDialogDismissedListener(this)
                     dialogDelete.show(childFragmentManager, "Eliminar anuncio")
                 }
