@@ -35,10 +35,10 @@ import java.io.StringBufferInputStream
 
 @Serializable
 data class User(
-    val id: Int,
+    val id: Int?,
     val email: String,
     val fullname: String,
-    val socials: String,
+    val socials: String?,
     val password: String,
 )
 

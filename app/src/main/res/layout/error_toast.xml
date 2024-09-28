@@ -1,0 +1,17 @@
+<!-- res/layout/custom_toast.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="10dp">
+
+    <TextView
+    android:id="@+id/toast_text"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textColor="#FF0000"
+    android:textSize="16sp"
+    android:paddingStart="10dp"
+    android:text="Error!" />
+
+</LinearLayout>

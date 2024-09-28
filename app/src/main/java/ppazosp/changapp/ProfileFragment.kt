@@ -72,7 +72,7 @@ class ProfileFragment : Fragment() {
 
     private fun hasSocialsChanged(): Boolean
     {
-        return !myUser.socials.equals(socialsView!!.text)
+        return !myUser.socials!!.equals(socialsView!!.text)
     }
 
     private fun hasPasswordChanged(): Boolean
