@@ -1,24 +1,34 @@
 package ppazosp.changapp
 
+import android.R
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.textfield.TextInputEditText
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import ppazosp.changapp.databinding.ActivityLoginBinding
-import ppazosp.changapp.databinding.ActivityMainBinding
+import java.security.SecureRandom
+import java.security.spec.KeySpec
+import java.util.Base64
+import javax.crypto.SecretKeyFactory
+import javax.crypto.spec.PBEKeySpec
 
 
 class LoginActivity : AppCompatActivity() {
+
+    private val SALT_LENGTH: Int = 16
+    private val HASH_ITERATIONS: Int = 10000
+    private val HASH_LENGTH: Int = 256
 
     private lateinit var binding: ActivityLoginBinding
 
@@ -43,30 +53,47 @@ class LoginActivity : AppCompatActivity() {
             CoroutineScope(Dispatchers.Main).launch { checkLogin() }
         }
 
+        registerButton.setOnClickListener {
+            val intent = Intent(this, RegisterActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     private suspend fun checkLogin()
     {
-        val email = emailView?.text?.toString()?.trim() ?: ""
-        val password = passwordView?.text?.toString()?.trim() ?: ""
 
-        if (email.isEmpty() || password.isEmpty()){
+        val email = emailView?.text?.toString()?.trim() ?: ""
+        val passwordEntered = passwordView?.text?.toString()?.trim() ?: ""
+
+
+        if (email.isEmpty() || passwordEntered.isEmpty()) {
             Toast.makeText(this, "email o contraseña vacíos", Toast.LENGTH_LONG).show()
             return
         }
 
         try {
-            supabase.from("users").select{
+
+            val user = supabase.from("users").select {
                 filter {
                     User::email eq email
-                    and { User::password eq password }
-                }}.decodeSingle<User>()
-        }catch (e:Exception){
+                }
+            }.decodeSingle<User>()
+
+            val storedHashedPassword = user.password
+
+            val isPasswordValid = validatePassword(passwordEntered, storedHashedPassword)
+
+            if (isPasswordValid) {
+                showMainActivity()
+            } else {
+                Toast.makeText(this, "email o contraseña incorrectos", Toast.LENGTH_LONG).show()
+            }
+
+        } catch (e: Exception) {
             Log.e("Exception", e.message.toString())
             Toast.makeText(this, "email o contraseña incorrectos", Toast.LENGTH_LONG).show()
-            return
         }
-            showMainActivity()
     }
 
     private fun showMainActivity()
@@ -77,5 +104,34 @@ class LoginActivity : AppCompatActivity() {
         )
         startActivity(intent)
         finish()
+    }
+
+    private fun generateSalt(): ByteArray {
+        val random = SecureRandom()
+        val salt = ByteArray(SALT_LENGTH)
+        random.nextBytes(salt)
+        return salt
+    }
+
+    private fun hashPassword(password: String, salt: ByteArray?): String {
+
+        val spec: KeySpec = PBEKeySpec(password.toCharArray(), salt, HASH_ITERATIONS, HASH_LENGTH)
+        val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1")
+
+        val hash = factory.generateSecret(spec).encoded
+
+        return Base64.getEncoder().encodeToString(salt) + ":" + Base64.getEncoder()
+            .encodeToString(hash)
+    }
+
+    private fun validatePassword(enteredPassword: String?, storedPassword: String): Boolean {
+
+        val parts = storedPassword.split(":".toRegex()).dropLastWhile { it.isEmpty() }
+            .toTypedArray()
+        val salt = Base64.getDecoder().decode(parts[0])
+
+        val enteredHash = hashPassword(enteredPassword!!, salt)
+
+        return enteredHash == storedPassword
     }
 }

@@ -39,7 +39,7 @@ data class User(
     val email: String,
     val fullname: String,
     val socials: String,
-    val password: String
+    val password: String,
 )
 
 @Serializable
