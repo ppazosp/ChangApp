@@ -156,6 +156,7 @@
                             android:id="@+id/password_input2"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:inputType="textPassword"
                             android:hint="Repetir contraseña"
                             android:textColor="@color/black"
                             android:textSize="16sp" />
