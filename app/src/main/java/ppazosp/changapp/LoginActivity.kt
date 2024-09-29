@@ -13,6 +13,7 @@ import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ppazosp.changapp.databinding.ActivityLoginBinding
 
 
@@ -55,53 +56,17 @@ class LoginActivity : AppCompatActivity() {
     private fun setOnClickListeners()
     {
         loginButton.setOnClickListener {
-            CoroutineScope(Dispatchers.Main).launch { checkLogin() }
+            LoadingScreen.show(this@LoginActivity)
+            val email = emailView.text.toString().trim()
+            val password = passwordView.text.toString().trim()
+            CoroutineScope(Dispatchers.Main).launch { checkLogin(this@LoginActivity, LoginUser(email, password)) }
+            LoadingScreen.hide()
         }
 
         registerButton.setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
         }
-    }
-
-    private suspend fun checkLogin()
-    {
-        LoadingScreen.show(this)
-
-        val email = emailView.text?.toString()?.trim() ?: ""
-        val passwordEntered = passwordView.text?.toString()?.trim() ?: ""
-
-
-        if (email.isEmpty() || passwordEntered.isEmpty()) {
-            Toast.makeText(this, "email o contraseña vacíos", Toast.LENGTH_LONG).show()
-            return
-        }
-
-        try {
-
-            val user = supabase.from("users").select {
-                filter {
-                    User::email eq email
-                }
-            }.decodeSingle<User>()
-
-            val storedHashedPassword = user.password
-
-            val isPasswordValid = Encripter.validatePassword(passwordEntered, storedHashedPassword)
-
-            if (isPasswordValid) {
-                myUser = user
-                showMainActivity()
-            } else {
-                Toast.makeText(this, "email o contraseña incorrectos", Toast.LENGTH_SHORT).show()
-            }
-
-        } catch (e: Exception) {
-            Log.e("Exception", e.message.toString())
-            Toast.makeText(this, "email o contraseña incorrectos", Toast.LENGTH_SHORT).show()
-        }
-
-        LoadingScreen.hide()
     }
 
     private fun showMainActivity()

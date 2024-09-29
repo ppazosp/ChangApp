@@ -43,41 +43,23 @@ class DeleteUserDialog : DialogFragment() {
     private fun setOnClickListeners()
     {
         deleteButton.setOnClickListener {
+            LoadingScreen.show(requireContext())
             CoroutineScope(Dispatchers.Main).launch {
-                deleteUser()
-                dismiss()
+                if (deleteUser(requireContext())){
+                    withContext(Dispatchers.Main)
+                    {
+                        LoadingScreen.hide()
+                        (activity as MainActivity).showLoginActivity()
+                        dismiss()
+                    }
+                }
+                else dismiss()
             }
         }
 
         cancelButton.setOnClickListener {
             dismiss()
         }
-    }
-
-    private suspend fun deleteUser()
-    {
-        LoadingScreen.show(requireContext())
-
-        try {
-            val result = supabase.from("users").delete {
-                filter {
-                    User::id eq myUser!!.id
-                }
-            }
-
-            if (result.data.isEmpty()) {
-                ErrorHandler.showError(requireContext(), "No se encontró el usuario")
-                return
-            }
-
-        }catch (e: Exception){
-            ErrorHandler.showError(requireContext(), "No se pudo eliminar el usuario")
-            return
-        }
-
-        LoadingScreen.hide()
-
-        (activity as MainActivity).showLoginActivity()
     }
 
 }

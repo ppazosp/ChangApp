@@ -20,6 +20,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.io.encoding.Base64
 
 interface OnDialogDismissedListener {
     fun onDialogDismissed()
@@ -140,16 +141,26 @@ class InsertAdvertDialog : DialogFragment() {
 
             CoroutineScope(Dispatchers.IO).launch {
 
-                LoadingScreen.show(requireContext())
+                withContext(Dispatchers.Main)
+                {
+                    LoadingScreen.show(requireContext())
+                }
 
                 var imageInput: ByteArray? = null
+                var image64: String? = null
 
-                if(hasImageViewChanged(image_input)) imageInput = Encripter.imageViewToByteArray(image_input)
+                if(hasImageViewChanged(image_input)) {
+                    imageInput = Encripter.imageViewToByteArray(image_input)
+                    image64 = Encripter.byteArrayToBase64(imageInput)
+                }
 
 
-                insertAdvert(titleText, descriptionText, imageInput)
+                insertAdvert(requireContext(), Advert(myUser.id!!, selectedSportID, selectedPlaceID, titleText, descriptionText, image64))
 
-                LoadingScreen.hide()
+                withContext(Dispatchers.Main)
+                {
+                    LoadingScreen.hide()
+                }
 
                 withContext(Dispatchers.Main) {
                     listener?.onDialogDismissed()
@@ -168,26 +179,6 @@ class InsertAdvertDialog : DialogFragment() {
         val defaultDrawable: Drawable? = ContextCompat.getDrawable(requireContext(), R.drawable.default_image)
 
         return currentDrawable != defaultDrawable
-    }
-
-    private suspend fun insertAdvert(title: String, description: String, image: ByteArray?) {
-
-        var imageBase64: String? = null
-
-        if (hasImageViewChanged(image_input)) imageBase64 = image?.let { Encripter.byteArrayToBase64(it) }
-
-        val add = Advert(
-            user = 1,
-            sport = spinnerSports!!.selectedItemPosition,
-            place = spinnerPlaces!!.selectedItemPosition,
-            title = title,
-            description = description,
-            image = imageBase64
-        )
-
-        withContext(Dispatchers.IO) {
-            supabase.from("adverts").insert(add)
-        }
     }
 
     private fun updateAdapters() {

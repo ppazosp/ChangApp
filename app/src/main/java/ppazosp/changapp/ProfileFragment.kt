@@ -14,6 +14,7 @@ import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ProfileFragment : Fragment() {
 
@@ -74,7 +75,18 @@ class ProfileFragment : Fragment() {
         saveButton.setOnClickListener {
 
             if(hasFullnameChanged() || hasSocialsChanged() || hasPasswordChanged())
-                CoroutineScope(Dispatchers.Main).launch { updateUser() }
+                CoroutineScope(Dispatchers.Main).launch {
+                    withContext(Dispatchers.Main)
+                    {
+                        LoadingScreen.show(requireContext())
+                    }
+                    updateUser()
+                    withContext(Dispatchers.Main)
+                    {
+                        LoadingScreen.hide()
+                    }
+                }
+            else ErrorHandler.showError(requireContext(), "No hay cambios que guardar")
 
         }
 
@@ -91,40 +103,32 @@ class ProfileFragment : Fragment() {
 
     private fun hasFullnameChanged(): Boolean
     {
-        return !myUser.fullname.equals(fullnameView.text)
+        return myUser.fullname != fullnameView.text.toString()
     }
 
     private fun hasSocialsChanged(): Boolean
     {
-        return !myUser.socials!!.equals(socialsView.text)
+        return myUser.socials!! != socialsView.text.toString()
     }
 
     private fun hasPasswordChanged(): Boolean
     {
-        return !myUser.password.equals(passwordView.text)
+        return myUser.password != passwordView.text.toString()
     }
 
     private suspend fun updateUser()
     {
-        LoadingScreen.show(requireContext())
-
-        var newPassword = ""
-        if(hasPasswordChanged()){
-            newPassword = Encripter.hashPassword(passwordView.text.toString(), Encripter.generateSalt())
-        }
 
         supabase.from("users").update(
             {
-                User::fullname setTo fullnameView.text.toString()
-                User::socials setTo socialsView.text.toString()
-                User::password setTo if (newPassword.isNotEmpty()) newPassword else passwordView.text.toString()
+                if (hasFullnameChanged()) User::fullname setTo fullnameView.text.toString()
+                if (hasSocialsChanged()) User::socials setTo socialsView.text.toString()
+                if (hasPasswordChanged()) User::password setTo Encripter.hashPassword(passwordView.text.toString(), Encripter.generateSalt())
             }
         ) {
             filter {
                 User::id eq myUser.id
             }
         }
-
-        LoadingScreen.hide()
     }
 }

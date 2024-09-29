@@ -21,6 +21,9 @@ class DeleteAdvertDialog : DialogFragment() {
     private var place: Int = -1
     private var sport: Int = -1
 
+    private lateinit var deleteButton: Button
+    private lateinit var cancelButton: Button
+
     companion object {
         private const val ARG_USER = "USER_KEY"
         private const val ARG_PLACE = "PLACE_KEY"
@@ -58,41 +61,35 @@ class DeleteAdvertDialog : DialogFragment() {
         val view = inflater.inflate(R.layout.dialog_delete_advert, container, false)
         dialog?.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
 
-        val deleteButton = view.findViewById<Button>(R.id.delete_button)
-        val cancelButton = view.findViewById<Button>(R.id.cancel_button)
+        initializeVars(view)
 
-
-        deleteButton.setOnClickListener {
-            CoroutineScope(Dispatchers.Main).launch {
-
-                deleteAdvert()
-
-                withContext(Dispatchers.Main) {
-                    listener?.onDialogDismissed()
-                    dismiss()
-                }
-
-            }
-
-
-        }
-
-        cancelButton.setOnClickListener {
-            dismiss()
-        }
+        setOnClickListeners()
 
         return view
     }
 
-    private suspend fun deleteAdvert() {
-        supabase.from("adverts").delete {
-            filter {
-                Advert::user eq user
-                and { Advert::place eq place
-                    and { Advert::sport eq sport
-                    }
-                }
-            }
+    private fun initializeVars(view: View)
+    {
+        deleteButton = view.findViewById(R.id.delete_button)
+        cancelButton = view.findViewById(R.id.cancel_button)
+    }
+
+    private fun setOnClickListeners()
+    {
+        deleteButton.setOnClickListener {
+
+            LoadingScreen.show(requireContext())
+
+            CoroutineScope(Dispatchers.Main).launch { deleteAdvert(requireContext(), user, place, sport) }
+
+            LoadingScreen.hide()
+
+            listener?.onDialogDismissed()
+            dismiss()
+        }
+
+        cancelButton.setOnClickListener {
+            dismiss()
         }
     }
 

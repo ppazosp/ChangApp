@@ -16,6 +16,7 @@ import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import ppazosp.changapp.databinding.ActivityRegisterBinding
 
@@ -60,6 +61,8 @@ class RegisterActivity : AppCompatActivity() {
     {
         registerButton.setOnClickListener {
 
+            LoadingScreen.show(this@RegisterActivity)
+
             val email = emailView.text.toString()
             val fullname = fullnameView.text.toString()
             val socials = socialsView.text.toString()
@@ -79,24 +82,13 @@ class RegisterActivity : AppCompatActivity() {
             val hashedPassword = Encripter.hashPassword(password, Encripter.generateSalt())
 
             val user = InsertionUser( email, fullname, socials, hashedPassword )
-            CoroutineScope(Dispatchers.Main).launch { registerUser(user) }
-        }
-    }
+            CoroutineScope(Dispatchers.Main).launch {
 
-    private suspend fun registerUser(user: InsertionUser) {
-        try {
-            supabase.from("users").insert(user)
-        } catch (e: Exception) {
-            if (e.message?.contains("duplicate key value", ignoreCase = true) == true) {
-                ErrorHandler.showError(this, "Este correo ya está registrado")
-            } else {
-                Log.e("Exception", e.message.toString())
-                ErrorHandler.showError(this, "No se pudo registrar el usuario")
+                if (registerUser(this@RegisterActivity, user)) showMainActivity()
+
+                withContext(Dispatchers.Main) { LoadingScreen.hide() }
             }
-            return
         }
-
-        showMainActivity()
     }
 
     private fun showMainActivity()

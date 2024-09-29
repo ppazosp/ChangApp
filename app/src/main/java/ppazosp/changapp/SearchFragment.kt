@@ -4,9 +4,7 @@ import android.animation.ValueAnimator
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.Base64
 import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -20,18 +18,12 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
-import android.widget.Toast
-import androidx.core.view.get
 import androidx.fragment.app.Fragment
-import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.Serializable
-import java.io.StringBufferInputStream
 
 
 class SearchFragment : Fragment(), OnDialogDismissedListener {
@@ -88,7 +80,7 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
     private fun setUI()
     {
         setupSpinners()
-        fetchSpinners()
+        fillSpinners()
     }
 
     private fun setOnClickListeners()
@@ -171,7 +163,7 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
         spinnerSports.setSelection(0)
     }
 
-    private fun fetchSpinners()
+    private fun fillSpinners()
     {
         CoroutineScope(Dispatchers.Main).launch {
             sports = fetchSports()
@@ -187,62 +179,12 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
         }
     }
 
-    private suspend fun fetchSports(): List<Sport>
-    {
-        return withContext(Dispatchers.IO) {
-            supabase.from("sports").select().decodeList<Sport>()
-        }
-    }
-
-    private suspend fun fetchPlaces(): List<Place>
-    {
-        return withContext(Dispatchers.IO) {
-            supabase.from("places").select().decodeList<Place>()
-        }
-    }
-
-    private suspend fun fetchAdverts(selectedPlace: Place?, selectedSport: Sport?): List<Advert> {
-        return withContext(Dispatchers.IO) {
-            when {
-                selectedPlace?.id == -1 && selectedSport?.id == -1 -> {
-                    supabase.from("adverts").select().decodeList<Advert>()
-                }
-                selectedPlace?.id == -1 -> {
-                    supabase.from("adverts").select {
-                        filter {
-                            Advert::sport eq selectedSport?.id
-                        }
-                    }.decodeList<Advert>()
-                }
-                selectedSport?.id == -1 -> {
-                    supabase.from("adverts").select {
-                        filter {
-                            Advert::place eq selectedPlace?.id
-                        }
-                    }.decodeList<Advert>()
-                }
-                else -> {
-                    supabase.from("adverts").select {
-                        filter {
-                            Advert::place eq selectedPlace?.id
-                            and { Advert::sport eq selectedSport?.id }
-                        }
-                    }.decodeList<Advert>()
-                }
-            }
-        }
-    }
-
-    private suspend fun fetchUser(id: Int): User
-    {
-        return withContext(Dispatchers.IO) {
-            supabase.from("users").select{filter { User::id eq id  }}.decodeSingle()
-        }
-    }
-
     private suspend fun search()
     {
-        LoadingScreen.show(requireContext())
+        withContext(Dispatchers.Main)
+        {
+            LoadingScreen.show(requireContext())
+        }
 
         resultsContainer.removeAllViews()
 
@@ -290,7 +232,10 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
             animateResultItem(resultView)
         }
 
-        LoadingScreen.hide()
+        withContext(Dispatchers.Main)
+        {
+            LoadingScreen.hide()
+        }
     }
 
     private fun animateResultItem(resultItem: View) {
