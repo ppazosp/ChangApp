@@ -1,49 +1,45 @@
 package ppazosp.changapp
 
-import android.content.pm.PackageManager
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.viewpager2.widget.ViewPager2
-import io.github.jan.supabase.createSupabaseClient
-import io.github.jan.supabase.postgrest.Postgrest
+import com.ismaeldivita.chipnavigation.ChipNavigationBar
 import ppazosp.changapp.databinding.ActivityMainBinding
 
-const val SUPABASE_URL : String = "https://mapvepqvdgagccguault.supabase.co"
-const val SUPABASE_API_KEY : String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hcHZlcHF2ZGdhZ2NjZ3VhdWx0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcyNzAyNjQ1NSwiZXhwIjoyMDQyNjAyNDU1fQ.WT754nds11_TpqM3by8cAbbFzSjTK-yybYU3SPDalGw"
-
-val supabase = createSupabaseClient(
-    supabaseUrl = SUPABASE_URL,
-    supabaseKey = SUPABASE_API_KEY
-) {
-    install(Postgrest)
-}
-
-val myUser: User = User(1,"pablopazosp3@gmail.com","Pablo Pazos Parada", "ppazosp", "ppazosp")
+lateinit var myUser: User
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    private lateinit var viewPager: ViewPager2
+    private lateinit var bottomNav: ChipNavigationBar
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
+        initializeVars()
+
         setUpViewPager()
+    }
+
+    private fun initializeVars()
+    {
+        viewPager = binding.viewpager
+        bottomNav = binding.bottomNavBar
     }
 
 
     private fun setUpViewPager() {
-
-        val viewPager = binding.viewpager
-        val bottomNav = binding.bottomNavBar
 
         val adapter = ViewPagerAdapter(this)
         viewPager.adapter = adapter
@@ -71,5 +67,12 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    fun showLoginActivity()
+    {
+        val intent = Intent(this@MainActivity, LoginActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }

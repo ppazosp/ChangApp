@@ -1,5 +1,6 @@
 package ppazosp.changapp
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -16,10 +17,15 @@ import kotlinx.coroutines.launch
 
 class ProfileFragment : Fragment() {
 
-    private var emailView: TextView? = null
-    private var fullnameView: EditText? = null
-    private var socialsView: EditText? = null
-    private var passwordView: EditText? = null
+    private lateinit var emailView: TextView
+    private lateinit var fullnameView: EditText
+    private lateinit var socialsView: EditText
+    private lateinit var passwordView: EditText
+
+    private lateinit var saveButton: Button
+
+    private lateinit var deleteFAB: FloatingActionButton
+    private lateinit var logoutFAB: FloatingActionButton
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,21 +34,43 @@ class ProfileFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_profile, container, false)
 
-        val saveButton = view.findViewById<Button>(R.id.save_button)
+        LoadingScreen.show(requireContext())
 
-        val deleteFAB = view.findViewById<FloatingActionButton>(R.id.fab_delete)
-        val logoutFAB = view.findViewById<FloatingActionButton>(R.id.fab_logout)
+        initializeVars(view)
+
+        setUI()
+
+        setOnClickListeners()
+
+        LoadingScreen.hide()
+
+        return view
+    }
+
+    private fun initializeVars(view: View)
+    {
+        saveButton = view.findViewById(R.id.save_button)
+
+        deleteFAB = view.findViewById(R.id.fab_delete)
+        logoutFAB = view.findViewById(R.id.fab_logout)
 
         emailView = view.findViewById(R.id.email_view)
         fullnameView = view.findViewById(R.id.fullname_view)
         socialsView = view.findViewById(R.id.socials_view)
         passwordView = view.findViewById(R.id.password_view)
 
-        emailView?.text = myUser.email
-        fullnameView?.setText(myUser.fullname)
-        socialsView?.setText(myUser.socials)
-        passwordView?.setText(myUser.password)
+    }
 
+    private fun setUI()
+    {
+        emailView.text = myUser.email
+        fullnameView.setText(myUser.fullname)
+        socialsView.setText(myUser.socials)
+        passwordView.setText(myUser.password)
+    }
+
+    private fun setOnClickListeners()
+    {
         saveButton.setOnClickListener {
 
             if(hasFullnameChanged() || hasSocialsChanged() || hasPasswordChanged())
@@ -51,47 +79,52 @@ class ProfileFragment : Fragment() {
         }
 
         deleteFAB.setOnClickListener{
-            //delete user and open login window
+            val dialogDelete = DeleteUserDialog()
+            dialogDelete.show(childFragmentManager, "Eliminar usuario")
         }
 
         logoutFAB.setOnClickListener{
-            //open login window
+            (activity as MainActivity).showLoginActivity()
         }
-
-
-
-        return view
     }
-
 
 
     private fun hasFullnameChanged(): Boolean
     {
-        return !myUser.fullname.equals(fullnameView!!.text)
+        return !myUser.fullname.equals(fullnameView.text)
     }
 
     private fun hasSocialsChanged(): Boolean
     {
-        return !myUser.socials!!.equals(socialsView!!.text)
+        return !myUser.socials!!.equals(socialsView.text)
     }
 
     private fun hasPasswordChanged(): Boolean
     {
-        return !myUser.password.equals(passwordView!!.text)
+        return !myUser.password.equals(passwordView.text)
     }
 
     private suspend fun updateUser()
     {
+        LoadingScreen.show(requireContext())
+
+        var newPassword = ""
+        if(hasPasswordChanged()){
+            newPassword = Encripter.hashPassword(passwordView.text.toString(), Encripter.generateSalt())
+        }
+
         supabase.from("users").update(
             {
-                User::fullname setTo fullnameView!!.text.toString()
-                User::socials setTo socialsView!!.text.toString()
-                User::password setTo passwordView!!.text.toString()
+                User::fullname setTo fullnameView.text.toString()
+                User::socials setTo socialsView.text.toString()
+                User::password setTo if (newPassword.isNotEmpty()) newPassword else passwordView.text.toString()
             }
         ) {
             filter {
                 User::id eq myUser.id
             }
         }
+
+        LoadingScreen.hide()
     }
 }

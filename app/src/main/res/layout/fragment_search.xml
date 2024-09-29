@@ -107,7 +107,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/fragment_layout_background"
-                    android:orientation="vertical" />
+                    android:orientation="vertical" >
+
+                </LinearLayout>
             </ScrollView>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -123,6 +125,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:srcCompat="@drawable/baseline_add_24" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </FrameLayout>

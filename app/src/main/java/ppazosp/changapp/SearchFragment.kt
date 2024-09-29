@@ -33,51 +33,25 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import java.io.StringBufferInputStream
 
-@Serializable
-data class User(
-    val id: Int?,
-    val email: String,
-    val fullname: String,
-    val socials: String?,
-    val password: String,
-)
-
-@Serializable
-data class Sport(
-    val id: Int,
-    val name: String
-)
-
-@Serializable
-data class Place(
-    val id: Int,
-    val name: String
-)
-
-@Serializable
-data class Advert(
-    val user: Int,
-    val sport: Int,
-    val place: Int,
-    val title: String,
-    val description: String,
-    val image: String?
-)
 
 class SearchFragment : Fragment(), OnDialogDismissedListener {
 
     private var sports: List<Sport> = emptyList()
     private var places: List<Place> = emptyList()
 
-    private var spinnerPlaces: Spinner? = null
-    private var spinnerSports: Spinner? = null
+    private lateinit var selectedPlace: Place
+    private lateinit var selectedSport: Sport
 
-    private var selectedPlace: Place? = null
-    private var selectedSport: Sport? = null
+    private lateinit var spinnerPlaces: Spinner
+    private lateinit var spinnerSports: Spinner
 
-    private var fab: FloatingActionButton? = null
+    private lateinit var miniframe: FrameLayout
+
+    private lateinit var fab: FloatingActionButton
     
-    private var resultsContainer: LinearLayout? = null
+    private lateinit var resultsContainer: LinearLayout
+
+    private lateinit var searchButton: Button
 
     private var firstSearchDone = false
 
@@ -88,19 +62,37 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
 
         val view = inflater.inflate(R.layout.fragment_search, container, false)
 
-        val searchButton: Button = view.findViewById(R.id.button_search)
-        val miniframe: FrameLayout = view.findViewById(R.id.miniframe)
-        fab = view.findViewById(R.id.fab)
+        LoadingScreen.show(requireContext())
 
+        initializeVars(view)
+
+        setUI()
+
+        setOnClickListeners()
+
+        LoadingScreen.hide()
+
+        return view
+    }
+
+    private fun initializeVars(view: View)
+    {
+        searchButton = view.findViewById(R.id.button_search)
+        miniframe = view.findViewById(R.id.miniframe)
+        fab = view.findViewById(R.id.fab)
         spinnerPlaces = view.findViewById(R.id.spinner_provincia)
         spinnerSports = view.findViewById(R.id.spinner_activity)
-        
         resultsContainer = view.findViewById(R.id.results_container)
+    }
 
-
+    private fun setUI()
+    {
         setupSpinners()
         fetchSpinners()
+    }
 
+    private fun setOnClickListeners()
+    {
         searchButton.setOnClickListener {
 
             CoroutineScope(Dispatchers.Main).launch { search() }
@@ -108,24 +100,17 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
             animateMiniframe(miniframe)
 
             searchButton.visibility = View.GONE
-            if(selectedPlace?.id!=-1 && selectedSport?.id!=-1) fab?.visibility = View.VISIBLE
+            if(selectedPlace.id!=-1 && selectedSport.id!=-1) fab.visibility = View.VISIBLE
             firstSearchDone = true
 
-            fab?.visibility = View.VISIBLE
+            fab.visibility = View.VISIBLE
         }
 
-        fab?.setOnClickListener {
-            val dialogInsert = InsertAdvertDialog.newInstance(selectedPlace!!.id, selectedSport!!.id)
+        fab.setOnClickListener {
+            val dialogInsert = InsertAdvertDialog.newInstance(selectedPlace.id, selectedSport.id)
             dialogInsert.setOnDialogDismissedListener(this)
             dialogInsert.show(childFragmentManager, "Crear anuncio")
         }
-
-        return view
-    }
-
-    override fun onDialogDismissed() {
-        CoroutineScope(Dispatchers.Main).launch { search() }
-        Log.e("called", "called")
     }
 
     private fun animateMiniframe(miniframe: FrameLayout) {
@@ -147,9 +132,14 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
         }
     }
 
+    override fun onDialogDismissed() {
+        CoroutineScope(Dispatchers.Main).launch { search() }
+        Log.e("called", "called")
+    }
+
     private fun setupSpinners() {
 
-        spinnerPlaces?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        spinnerPlaces.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 selectedPlace = places[position]
 
@@ -158,7 +148,7 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
 
-        spinnerSports?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        spinnerSports.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 selectedSport = sports[position]
 
@@ -172,13 +162,13 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
 
         val adapterProvincias = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, places.map { it.name })
         adapterProvincias.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerPlaces?.adapter = adapterProvincias
-        spinnerPlaces?.setSelection(0)
+        spinnerPlaces.adapter = adapterProvincias
+        spinnerPlaces.setSelection(0)
 
         val adapterSports = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, sports.map { it.name })
         adapterSports.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerSports?.adapter = adapterSports
-        spinnerSports?.setSelection(0)
+        spinnerSports.adapter = adapterSports
+        spinnerSports.setSelection(0)
     }
 
     private fun fetchSpinners()
@@ -252,7 +242,9 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
 
     private suspend fun search()
     {
-        resultsContainer?.removeAllViews()
+        LoadingScreen.show(requireContext())
+
+        resultsContainer.removeAllViews()
 
         val adverts: List<Advert> = fetchAdverts(selectedPlace, selectedSport)
         for(advert in adverts)
@@ -279,24 +271,26 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
             fullnameView.text = user.fullname
             val socialsText = "@" + user.socials
             socialsView.text = socialsText
-            placeView.text = spinnerPlaces!!.getItemAtPosition(advert.place) as String
-            if (advert.image != null ) setImageFromBase64(picView, advert.image)
+            placeView.text = spinnerPlaces.getItemAtPosition(advert.place) as String
+            if (advert.image != null ) Encripter.setImageFromBase64(picView, advert.image)
 
             copyTextOnTouch(resultView.findViewById(R.id.socials))
 
             if(advert.user == myUser.id)
             {
                 linerLayout.setOnClickListener {
-                    val dialogDelete = DeleteAdvertDialog.newInstance(myUser.id, advert.place, advert.sport)
+                    val dialogDelete = DeleteAdvertDialog.newInstance(myUser.id!!, advert.place, advert.sport)
                     dialogDelete.setOnDialogDismissedListener(this)
                     dialogDelete.show(childFragmentManager, "Eliminar anuncio")
                 }
             }
 
-            resultsContainer?.addView(resultView)
+            resultsContainer.addView(resultView)
 
             animateResultItem(resultView)
         }
+
+        LoadingScreen.hide()
     }
 
     private fun animateResultItem(resultItem: View) {
@@ -313,20 +307,6 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
             val clipboard = textView.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("Copied Text", textView.text.toString())
             clipboard.setPrimaryClip(clip)
-
-            Toast.makeText(textView.context, "Text copied to clipboard!", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun base64ToByteArray(base64String: String): ByteArray {
-        return Base64.decode(base64String, Base64.NO_WRAP)
-    }
-
-    private fun setImageFromBase64(imageView: ImageView, base64String: String?) {
-        base64String?.let {
-            val imageBytes = base64ToByteArray(it)
-            val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-            imageView.setImageBitmap(bitmap)
         }
     }
 
