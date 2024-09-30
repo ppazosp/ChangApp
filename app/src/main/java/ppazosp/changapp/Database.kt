@@ -116,16 +116,16 @@ suspend fun fetchAdverts(query: String, selectedPlace: Place?, selectedSport: Sp
             selectedPlace?.id == -1 && selectedSport?.id == -1 -> {
                 supabase.from("adverts").select{
                     filter {
-                        Advert::title like "%$query%"
-                        or { Advert::description like "%$query"}
+                        Advert::title ilike "%$query%"
+                        or { Advert::description ilike "%$query%" }
                     }
                 }.decodeList<Advert>()
             }
             selectedPlace?.id == -1 -> {
                 supabase.from("adverts").select {
                     filter {
-                        Advert::title like "%$query%"
-                        or { Advert::description like "%$query" }
+                        Advert::title ilike "%$query%"
+                        or { Advert::description ilike "%$query%" }
 
                         and { Advert::sport eq selectedSport?.id }
                     }
@@ -134,8 +134,8 @@ suspend fun fetchAdverts(query: String, selectedPlace: Place?, selectedSport: Sp
             selectedSport?.id == -1 -> {
                 supabase.from("adverts").select {
                     filter {
-                        Advert::title like "%$query%"
-                        or { Advert::description like "%$query" }
+                        Advert::title ilike "%$query%"
+                        or { Advert::description ilike "%$query%" }
 
                         and{ Advert::place eq selectedPlace?.id }
                     }
@@ -144,8 +144,8 @@ suspend fun fetchAdverts(query: String, selectedPlace: Place?, selectedSport: Sp
             else -> {
                 supabase.from("adverts").select {
                     filter {
-                        Advert::title like "%$query%"
-                        or { Advert::description like "%$query" }
+                        Advert::title ilike "%$query%"
+                        or { Advert::description ilike "%$query%" }
 
                         and{ Advert::place eq selectedPlace?.id
                             and { Advert::sport eq selectedSport?.id } }
