@@ -23,7 +23,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:paddingBottom="20dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/query"
@@ -35,8 +36,9 @@
                 android:background="@drawable/item_background"
                 android:hint="Buscar..."
                 android:paddingHorizontal="10dp"
+                android:singleLine="true"
                 android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/button_search"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -83,7 +85,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginEnd="10dp"
                 android:src="@drawable/baseline_sports_basketball_24"
                 app:layout_constraintEnd_toStartOf="@+id/spinner_activity"
@@ -94,17 +96,13 @@
                 android:id="@+id/button_search"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:layout_marginStart="150dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginEnd="150dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginEnd="20dp"
                 android:background="@drawable/search_button_background"
                 android:text="@string/string_searchButton"
                 android:textAllCaps="false"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/spinner_activity" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ScrollView
                 android:id="@+id/results_container_scroll"
@@ -113,9 +111,9 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="30dp"
                 android:layout_marginEnd="20dp"
-                android:layout_marginBottom="20dp"
                 android:background="@drawable/fragment_layout_background"
                 android:orientation="vertical"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -126,7 +124,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/fragment_layout_background"
-                    android:orientation="vertical" >
+                    android:orientation="vertical">
 
                 </LinearLayout>
             </ScrollView>
@@ -136,7 +134,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="20dp"
-                android:layout_marginBottom="20dp"
                 android:backgroundTint="@color/dark_grey"
                 android:clickable="true"
                 android:elevation="20dp"

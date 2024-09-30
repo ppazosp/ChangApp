@@ -17,6 +17,7 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -43,6 +44,8 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
     private lateinit var fab: FloatingActionButton
     
     private lateinit var resultsContainer: LinearLayout
+
+    private lateinit var resultsContainerScroll: ScrollView
 
     private lateinit var searchButton: Button
 
@@ -78,6 +81,8 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
         spinnerPlaces = view.findViewById(R.id.spinner_provincia)
         spinnerSports = view.findViewById(R.id.spinner_activity)
         resultsContainer = view.findViewById(R.id.results_container)
+        resultsContainerScroll = view.findViewById(R.id.results_container_scroll)
+
         queryView = view.findViewById(R.id.query)
     }
 
@@ -93,13 +98,15 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
 
             CoroutineScope(Dispatchers.Main).launch { search() }
 
-            animateMiniframe(miniframe)
+            if (!firstSearchDone)
+            {
+                animateMiniframe(miniframe)
 
-            searchButton.visibility = View.GONE
-            if(selectedPlace.id!=-1 && selectedSport.id!=-1) fab.visibility = View.VISIBLE
-            firstSearchDone = true
+                resultsContainerScroll.visibility = View.VISIBLE
+                fab.visibility = View.VISIBLE
 
-            fab.visibility = View.VISIBLE
+                firstSearchDone = true
+            }
         }
 
         fab.setOnClickListener {
