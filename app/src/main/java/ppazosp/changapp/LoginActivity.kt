@@ -59,8 +59,16 @@ class LoginActivity : AppCompatActivity() {
             LoadingScreen.show(this@LoginActivity)
             val email = emailView.text.toString().trim()
             val password = passwordView.text.toString().trim()
-            CoroutineScope(Dispatchers.Main).launch { checkLogin(this@LoginActivity, LoginUser(email, password)) }
-            LoadingScreen.hide()
+            CoroutineScope(Dispatchers.Main).launch {
+                checkLogin(this@LoginActivity, LoginUser(email, password))
+
+                withContext(Dispatchers.Main)
+                {
+                    LoadingScreen.hide()
+
+                    showMainActivity()
+                }
+            }
         }
 
         registerButton.setOnClickListener {

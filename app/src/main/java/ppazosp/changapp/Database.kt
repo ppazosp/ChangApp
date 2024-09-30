@@ -141,7 +141,7 @@ suspend fun checkLogin(context: Context, user: LoginUser): Boolean
             }
         }.decodeSingle<User>()
 
-        val storedHashedPassword = user.password
+        val storedHashedPassword = loggedUser.password
 
         val isPasswordValid = Encripter.validatePassword(user.password, storedHashedPassword)
 
