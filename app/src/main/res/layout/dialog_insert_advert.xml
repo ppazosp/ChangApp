@@ -40,7 +40,7 @@
             app:layout_constraintTop_toBottomOf="@+id/fab_add_photo">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/title_input"
+                android:id="@+id/last_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Título"

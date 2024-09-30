@@ -60,13 +60,20 @@ class LoginActivity : AppCompatActivity() {
             val email = emailView.text.toString().trim()
             val password = passwordView.text.toString().trim()
             CoroutineScope(Dispatchers.Main).launch {
-                checkLogin(this@LoginActivity, LoginUser(email, password))
-
-                withContext(Dispatchers.Main)
+                if (checkLogin(this@LoginActivity, LoginUser(email, password)))
                 {
-                    LoadingScreen.hide()
+                    withContext(Dispatchers.Main)
+                    {
+                        LoadingScreen.hide()
 
-                    showMainActivity()
+                        showMainActivity()
+                    }
+                }else
+                {
+                    withContext(Dispatchers.Main)
+                    {
+                        LoadingScreen.hide()
+                    }
                 }
             }
         }

@@ -20,7 +20,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.io.encoding.Base64
 
 interface OnDialogDismissedListener {
     fun onDialogDismissed()
@@ -91,7 +90,7 @@ class InsertAdvertDialog : DialogFragment() {
 
         LoadingScreen.show(requireContext())
 
-        initialize(view)
+        initializeVars(view)
 
         setUI()
 
@@ -102,9 +101,9 @@ class InsertAdvertDialog : DialogFragment() {
         return view
     }
 
-    private fun initialize(view: View)
+    private fun initializeVars(view: View)
     {
-        title_input = view.findViewById(R.id.title_input)
+        title_input = view.findViewById(R.id.last_message)
         description_input = view.findViewById(R.id.description_input)
         image_input = view.findViewById(R.id.pic_add)
 
@@ -155,14 +154,11 @@ class InsertAdvertDialog : DialogFragment() {
                 }
 
 
-                insertAdvert(requireContext(), Advert(myUser.id!!, selectedSportID, selectedPlaceID, titleText, descriptionText, image64))
-
-                withContext(Dispatchers.Main)
-                {
-                    LoadingScreen.hide()
-                }
+                insertAdvert(requireContext(), InsertAdvert(myUser.id!!, spinnerSports!!.selectedItemPosition, spinnerPlaces!!.selectedItemPosition, titleText, descriptionText, image64))
 
                 withContext(Dispatchers.Main) {
+                    LoadingScreen.hide()
+
                     listener?.onDialogDismissed()
                     dismiss()
                 }
@@ -186,12 +182,12 @@ class InsertAdvertDialog : DialogFragment() {
         val adapterProvincias = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, places.map { it.name })
         adapterProvincias.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerPlaces?.adapter = adapterProvincias
-        spinnerPlaces?.setSelection(0)
+        spinnerPlaces?.setSelection(selectedPlaceID)
 
         val adapterSports = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, sports.map { it.name })
         adapterSports.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerSports?.adapter = adapterSports
-        spinnerSports?.setSelection(0)
+        spinnerSports?.setSelection(selectedSportID)
     }
 
     private fun fetchSpinners()

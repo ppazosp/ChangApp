@@ -197,8 +197,8 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
 
             val userView = resultView.findViewById<TextView>(R.id.userID)
 
-            val titleView = resultView.findViewById<TextView>(R.id.title)
-            val descriptionView = resultView.findViewById<TextView>(R.id.title_input)
+            val titleView = resultView.findViewById<TextView>(R.id.username)
+            val descriptionView = resultView.findViewById<TextView>(R.id.last_message)
             val fullnameView = resultView.findViewById<TextView>(R.id.name)
             val socialsView = resultView.findViewById<TextView>(R.id.socials)
             val placeView = resultView.findViewById<TextView>(R.id.place)
@@ -216,14 +216,18 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
             placeView.text = spinnerPlaces.getItemAtPosition(advert.place) as String
             if (advert.image != null ) Encripter.setImageFromBase64(picView, advert.image)
 
-            copyTextOnTouch(resultView.findViewById(R.id.socials))
-
             if(advert.user == myUser.id)
             {
                 linerLayout.setOnClickListener {
                     val dialogDelete = DeleteAdvertDialog.newInstance(myUser.id!!, advert.place, advert.sport)
                     dialogDelete.setOnDialogDismissedListener(this)
                     dialogDelete.show(childFragmentManager, "Eliminar anuncio")
+                }
+            }else
+            {
+                linerLayout.setOnClickListener {
+                    val dialogJoin = JoinActivityDialog.newInstance(advert.user, advert.id)
+                    dialogJoin.show(childFragmentManager, "Enviar solicitud")
                 }
             }
 
@@ -245,14 +249,6 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
         resultItem.visibility = View.VISIBLE
 
         resultItem.animate().scaleX(1f).setDuration(1000).start()
-    }
-
-    private fun copyTextOnTouch(textView: TextView) {
-        textView.setOnClickListener {
-            val clipboard = textView.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText("Copied Text", textView.text.toString())
-            clipboard.setPrimaryClip(clip)
-        }
     }
 
 }

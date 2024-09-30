@@ -16,7 +16,7 @@ const val SUPABASE_API_KEY : String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJp
 
 val supabase = createSupabaseClient(
     supabaseUrl = SUPABASE_URL,
-    supabaseKey = SUPABASE_API_KEY
+    supabaseKey = SUPABASE_API_KEY,
 ) {
     install(Postgrest)
 }
@@ -58,6 +58,7 @@ data class Place(
 
 @Serializable
 data class Advert(
+    val id: Int,
     val user: Int,
     val sport: Int,
     val place: Int,
@@ -65,6 +66,34 @@ data class Advert(
     val description: String,
     val image: String?
 )
+
+@Serializable
+data class InsertAdvert(
+    val user: Int,
+    val sport: Int,
+    val place: Int,
+    val title: String,
+    val description: String,
+    val image: String?
+)
+
+@Serializable
+data class Message(
+    val id: Int,
+    val sender_id: Int,
+    val receiver_id: Int,
+    val advert_id: Int,
+    val seen: Boolean
+)
+
+@Serializable
+data class InsertMessage(
+    val sender_id: Int,
+    val receiver_id: Int,
+    val advert_id: Int,
+    val seen: Boolean
+)
+
 
 suspend fun fetchSports(): List<Sport>
 {
@@ -116,6 +145,13 @@ suspend fun fetchUser(id: Int): User
 {
     return withContext(Dispatchers.IO) {
         supabase.from("users").select{filter { User::id eq id  }}.decodeSingle()
+    }
+}
+
+suspend fun fetchAdvert(id: Int): Advert
+{
+    return withContext(Dispatchers.IO) {
+        supabase.from("adverts").select{filter { Advert::id eq id  }}.decodeSingle()
     }
 }
 
@@ -179,12 +215,16 @@ suspend fun registerUser(context: Context, user: InsertionUser) : Boolean {
     return true
 }
 
-suspend fun insertAdvert(context:Context, advert: Advert) {
+suspend fun insertAdvert(context:Context, advert: InsertAdvert) {
 
     try{
         supabase.from("adverts").insert(advert)
     }catch (e: Exception){
-        ErrorHandler.showError(context, "No se pudo publicar el anuncio")
+        Log.e("Error", e.message.toString())
+        withContext(Dispatchers.Main)
+        {
+            ErrorHandler.showError(context, "No se pudo publicar el anuncio")
+        }
     }
 
 }
@@ -205,7 +245,10 @@ suspend fun deleteAdvert(context: Context, user: Int, place: Int, sport: Int) {
         }
     }catch (e: Exception)
     {
-        ErrorHandler.showError(context, "No se pudo eliminar el anuncio")
+        withContext(Dispatchers.Main)
+        {
+            ErrorHandler.showError(context, "No se pudo eliminar el anuncio")
+        }
     }
 }
 
@@ -225,11 +268,50 @@ suspend fun deleteUser(context: Context) : Boolean
         }
 
     }catch (e: Exception){
-        ErrorHandler.showError(context, "No se pudo eliminar el usuario")
+        withContext(Dispatchers.Main)
+        {
+            ErrorHandler.showError(context, "No se pudo eliminar el usuario")
+        }
         return false
     }
 
     return true
+}
+
+suspend fun getMessages(context: Context): List<Message>
+{
+    var messages: List<Message> = emptyList()
+
+    try{
+        messages = supabase.from("messages").select {
+            filter {
+                Message::receiver_id eq myUser.id
+            }
+        }.decodeList<Message>()
+    }catch (e: Exception)
+    {
+        withContext(Dispatchers.Main)
+        {
+            ErrorHandler.showError(context, "No se pudieron recuperar los mensajes")
+        }
+        return messages
+    }
+
+    return messages
+}
+
+suspend fun sendResquest(context: Context, request: InsertMessage)
+{
+    try{
+        supabase.from("messages").insert(request)
+    }catch (e: Exception)
+    {
+        Log.e("Error", e.message.toString())
+        withContext(Dispatchers.Main)
+        {
+            ErrorHandler.showError(context, "No se pudo enviar la solicitud")
+        }
+    }
 }
 
 

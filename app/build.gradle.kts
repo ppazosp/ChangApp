@@ -59,7 +59,9 @@ dependencies {
     implementation ("com.google.android.material:material:1.4.0")
 
     implementation(platform("io.github.jan-tennert.supabase:bom:2.6.1"))
+
     implementation("io.github.jan-tennert.supabase:postgrest-kt")
+
     implementation("io.ktor:ktor-client-android:2.3.12")
 
     implementation("com.github.bumptech.glide:glide:4.16.0")
