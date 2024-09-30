@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -45,6 +46,8 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
 
     private lateinit var searchButton: Button
 
+    private lateinit var queryView: EditText
+
     private var firstSearchDone = false
 
     override fun onCreateView(
@@ -75,6 +78,7 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
         spinnerPlaces = view.findViewById(R.id.spinner_provincia)
         spinnerSports = view.findViewById(R.id.spinner_activity)
         resultsContainer = view.findViewById(R.id.results_container)
+        queryView = view.findViewById(R.id.query)
     }
 
     private fun setUI()
@@ -188,7 +192,9 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
 
         resultsContainer.removeAllViews()
 
-        val adverts: List<Advert> = fetchAdverts(selectedPlace, selectedSport)
+        val query = queryView.text.toString()
+
+        val adverts: List<Advert> = fetchAdverts(query, selectedPlace, selectedSport)
         for(advert in adverts)
         {
             val user = fetchUser(advert.user)
@@ -226,8 +232,6 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
             }else
             {
                 linerLayout.setOnClickListener {
-                    val dialogJoin = JoinActivityDialog.newInstance(advert.user, advert.id)
-                    dialogJoin.show(childFragmentManager, "Enviar solicitud")
                 }
             }
 

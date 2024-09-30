@@ -49,11 +49,8 @@ class MainActivity : AppCompatActivity() {
                 R.id.search -> {
                     viewPager.currentItem = 0
                 }
-                R.id.chats -> {
-                    viewPager.currentItem = 1
-                }
                 R.id.profile -> {
-                    viewPager.currentItem = 2
+                    viewPager.currentItem = 1
                 }
             }
         }
@@ -62,8 +59,7 @@ class MainActivity : AppCompatActivity() {
             override fun onPageSelected(position: Int) {
                 when (position) {
                     0 -> bottomNav.setItemSelected(R.id.search)
-                    1 -> bottomNav.setItemSelected(R.id.chats)
-                    2 -> bottomNav.setItemSelected(R.id.profile)
+                    1 -> bottomNav.setItemSelected(R.id.profile)
                 }
             }
         })

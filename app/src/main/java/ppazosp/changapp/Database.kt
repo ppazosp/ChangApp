@@ -6,6 +6,7 @@ import android.widget.Toast
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
@@ -109,31 +110,45 @@ suspend fun fetchPlaces(): List<Place>
     }
 }
 
-suspend fun fetchAdverts(selectedPlace: Place?, selectedSport: Sport?): List<Advert> {
+suspend fun fetchAdverts(query: String, selectedPlace: Place?, selectedSport: Sport?): List<Advert> {
     return withContext(Dispatchers.IO) {
         when {
             selectedPlace?.id == -1 && selectedSport?.id == -1 -> {
-                supabase.from("adverts").select().decodeList<Advert>()
+                supabase.from("adverts").select{
+                    filter {
+                        Advert::title like "%$query%"
+                        or { Advert::description like "%$query"}
+                    }
+                }.decodeList<Advert>()
             }
             selectedPlace?.id == -1 -> {
                 supabase.from("adverts").select {
                     filter {
-                        Advert::sport eq selectedSport?.id
+                        Advert::title like "%$query%"
+                        or { Advert::description like "%$query" }
+
+                        and { Advert::sport eq selectedSport?.id }
                     }
                 }.decodeList<Advert>()
             }
             selectedSport?.id == -1 -> {
                 supabase.from("adverts").select {
                     filter {
-                        Advert::place eq selectedPlace?.id
+                        Advert::title like "%$query%"
+                        or { Advert::description like "%$query" }
+
+                        and{ Advert::place eq selectedPlace?.id }
                     }
                 }.decodeList<Advert>()
             }
             else -> {
                 supabase.from("adverts").select {
                     filter {
-                        Advert::place eq selectedPlace?.id
-                        and { Advert::sport eq selectedSport?.id }
+                        Advert::title like "%$query%"
+                        or { Advert::description like "%$query" }
+
+                        and{ Advert::place eq selectedPlace?.id
+                            and { Advert::sport eq selectedSport?.id } }
                     }
                 }.decodeList<Advert>()
             }
@@ -313,6 +328,32 @@ suspend fun sendResquest(context: Context, request: InsertMessage)
         }
     }
 }
+
+suspend fun fetchAdverts(context: Context, query: String): List<Advert>
+{
+    var adverts: List<Advert> = emptyList()
+
+    try{
+        adverts = supabase.from("advert").select {
+            filter {
+                Advert::title like "%$query%"
+                or { Advert::description like "%$query"}
+            }
+        }.decodeList()
+
+    }catch (e: Exception)
+    {
+        Log.e("Error", e.message.toString())
+        withContext(Dispatchers.Main)
+        {
+            ErrorHandler.showError(context, "No se ha podido realizar la búsqueda")
+        }
+    }
+
+    return adverts
+}
+
+
 
 
 

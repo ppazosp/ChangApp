@@ -9,13 +9,12 @@ class ViewPagerAdapter(fa: FragmentActivity?) : FragmentStateAdapter(fa!!) {
 
         return when (position) {
             0 -> SearchFragment()
-            1 -> ChatsFragment()
-            2 -> ProfileFragment()
+            1 -> ProfileFragment()
             else -> {SearchFragment()}
         }
     }
 
     override fun getItemCount(): Int {
-        return 3
+        return 2
     }
 }

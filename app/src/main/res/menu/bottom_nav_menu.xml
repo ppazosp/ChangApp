@@ -7,11 +7,6 @@
         android:icon="@drawable/baseline_search_24"
         app:cnb_iconColor="@color/dark_grey"/>
 
-    <item android:id="@+id/chats"
-        android:title="@string/mensajes"
-        android:icon="@drawable/baseline_chat_24"
-        app:cnb_iconColor="@color/dark_grey"/>
-
     <item android:id="@+id/profile"
         android:title="@string/perfil"
         android:icon="@drawable/baseline_person_24"
