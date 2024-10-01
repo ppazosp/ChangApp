@@ -19,6 +19,7 @@ import android.widget.Spinner
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import io.ktor.websocket.Frame
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,7 +35,7 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
     private lateinit var selectedType: Type
 
     private lateinit var spinnerPlaces: Spinner
-    private lateinit var spinnerSports: Spinner
+    private lateinit var spinnerTypes: Spinner
 
     private lateinit var miniframe: FrameLayout
 
@@ -76,7 +77,7 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
         miniframe = view.findViewById(R.id.miniframe)
         fab = view.findViewById(R.id.fab)
         spinnerPlaces = view.findViewById(R.id.spinner_provincia)
-        spinnerSports = view.findViewById(R.id.spinner_activity)
+        spinnerTypes = view.findViewById(R.id.spinner_activity)
         resultsContainer = view.findViewById(R.id.results_container)
         resultsContainerScroll = view.findViewById(R.id.results_container_scroll)
 
@@ -148,7 +149,7 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
 
-        spinnerSports.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        spinnerTypes.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 selectedType = types[position]
 
@@ -167,8 +168,8 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
 
         val adapterSports = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, types.map { it.name })
         adapterSports.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerSports.adapter = adapterSports
-        spinnerSports.setSelection(0)
+        spinnerTypes.adapter = adapterSports
+        spinnerTypes.setSelection(0)
     }
 
     private fun fillSpinners()
@@ -207,30 +208,30 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
 
             val userView = resultView.findViewById<TextView>(R.id.userID)
 
-            val titleView = resultView.findViewById<TextView>(R.id.username)
-            val descriptionView = resultView.findViewById<TextView>(R.id.last_message)
-            val placeView = resultView.findViewById<TextView>(R.id.place)
+            val titleView = resultView.findViewById<TextView>(R.id.title_view)
+            val typePlaceView = resultView.findViewById<TextView>(R.id.type_place_view)
             val picView = resultView.findViewById<ImageView>(R.id.pic)
 
-            val linerLayout = resultView.findViewById<LinearLayout>(R.id.linearLayout)
+            val frameLayout = resultView.findViewById<FrameLayout>(R.id.linearLayout)
 
             userView.text = advert.user.toString()
 
             titleView.text = advert.title
-            descriptionView.text = advert.description
-            placeView.text = spinnerPlaces.getItemAtPosition(advert.place) as String
+            val typePlace = "${spinnerPlaces.getItemAtPosition(advert.place) as String} - ${spinnerTypes.getItemAtPosition(advert.type) as String}"
+            Log.e("Error", typePlace)
+            typePlaceView.text = typePlace
             if (advert.image != null ) Encripter.setImageFromBase64(picView, advert.image)
 
             if(advert.user == myUser.id)
             {
-                linerLayout.setOnClickListener {
+                frameLayout.setOnClickListener {
                     val dialogDelete = DeleteAdvertDialog.newInstance(myUser.id!!, advert.place, advert.type)
                     dialogDelete.setOnDialogDismissedListener(this)
                     dialogDelete.show(childFragmentManager, "Eliminar anuncio")
                 }
             }else
             {
-                linerLayout.setOnClickListener {
+                frameLayout.setOnClickListener {
                     val dialogShowAdvert = ShowAdvertDialog.newInstance(advert.id)
                     dialogShowAdvert.show(childFragmentManager, "Mostrar anuncio")
                 }

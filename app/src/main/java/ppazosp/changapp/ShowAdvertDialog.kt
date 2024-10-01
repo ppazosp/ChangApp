@@ -12,6 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.w3c.dom.Text
 
 class ShowAdvertDialog : DialogFragment() {
 
@@ -20,12 +21,14 @@ class ShowAdvertDialog : DialogFragment() {
     private lateinit var advert: Advert
     private lateinit var user: User
     private lateinit var place: Place
+    private lateinit var type: Type
 
     private lateinit var titleView: TextView
     private lateinit var descriptionView: TextView
     private lateinit var imageView: ImageView
     private lateinit var fullnameView: TextView
     private lateinit var placeView: TextView
+    private lateinit var typeView: TextView
 
     companion object {
         private const val ARG_ADVERTID = "USER_KEY"
@@ -68,11 +71,13 @@ class ShowAdvertDialog : DialogFragment() {
         imageView = view.findViewById(R.id.advert_image_view)
         fullnameView = view.findViewById(R.id.user_view)
         placeView = view.findViewById(R.id.place_view)
+        typeView = view.findViewById(R.id.type_view)
 
         CoroutineScope(Dispatchers.Main).launch {
             advert = fetchAdvert(advertID)
             user = fetchUser(advert.user)
             place = fetchPlace(advert.place)
+            type = fetchType(advert.type)
 
             withContext(Dispatchers.Main) {
                 setUI()
@@ -88,6 +93,7 @@ class ShowAdvertDialog : DialogFragment() {
         descriptionView.text = advert.description
         fullnameView.text = user.fullname
         placeView.text = place.name
+        typeView.text = type.name
 
         if (advert.image != null ) Encripter.setImageFromBase64(imageView, advert.image)
         else imageView.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.default_image))

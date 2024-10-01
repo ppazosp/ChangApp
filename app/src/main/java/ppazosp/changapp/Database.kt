@@ -183,6 +183,12 @@ suspend fun fetchPlace(id: Int): Place
     }
 }
 
+suspend fun fetchType(id: Int): Type
+{
+    return withContext(Dispatchers.IO) {
+        supabase.from("types").select{filter { Type::id eq id  }}.decodeSingle()
+    }
+}
 
 suspend fun fetchAdvert(id: Int): Advert
 {
