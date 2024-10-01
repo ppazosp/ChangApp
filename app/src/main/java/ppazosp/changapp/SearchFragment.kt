@@ -2,7 +2,6 @@ package ppazosp.changapp
 
 import android.animation.ValueAnimator
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +18,6 @@ import android.widget.Spinner
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import io.ktor.websocket.Frame
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -51,6 +49,9 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
 
     private var firstSearchDone = false
 
+    private var spinnersFilled = false
+    private var allInitialized = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -68,7 +69,17 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
 
         LoadingScreen.hide()
 
+        allInitialized = true
+
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if(allInitialized && spinnersFilled and firstSearchDone){
+            CoroutineScope(Dispatchers.Main).launch { search() }
+        }
     }
 
     private fun initializeVars(view: View)
@@ -108,7 +119,9 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
         }
 
         fab.setOnClickListener {
-            val dialogInsert = InsertAdvertDialog.newInstance(selectedPlace.id, selectedType.id)
+            val dialogInsert = InsertAdvertDialog.newInstance(
+                if(selectedPlace.id != -1) selectedPlace.id else 0 ,
+                if(selectedType.id != -1) selectedType.id else 0)
             dialogInsert.setOnDialogDismissedListener(this)
             dialogInsert.show(childFragmentManager, "Crear anuncio")
         }
@@ -184,6 +197,8 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
             places = listOf(defaultPlace) + places
 
             if(isAdded) updateAdapters()
+
+            spinnersFilled = true
         }
     }
 
@@ -226,7 +241,6 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
                 val dialogShowAdvert = ShowAdvertDialog.newInstance(advert.id)
                 dialogShowAdvert.show(childFragmentManager, "Mostrar anuncio")
             }
-
 
             resultsContainer.addView(resultView)
 

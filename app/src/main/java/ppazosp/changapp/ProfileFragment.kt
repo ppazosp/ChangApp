@@ -34,6 +34,9 @@ class ProfileFragment : Fragment(), OnDialogDismissedListener {
     private lateinit var userAdvertsLayout: FrameLayout
     private lateinit var userAdvertsContainer: LinearLayout
 
+    private var allInitialized = false
+    private var advertsRetrieved = false
+
     override fun onDialogDismissed() {
         CoroutineScope(Dispatchers.Main).launch { retrieveUserAdverts(true) }
     }
@@ -53,7 +56,17 @@ class ProfileFragment : Fragment(), OnDialogDismissedListener {
 
         setOnClickListeners()
 
+        allInitialized = true
+
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (allInitialized && advertsRetrieved){
+            CoroutineScope(Dispatchers.Main).launch { retrieveUserAdverts(true) }
+        }
     }
 
     private fun initializeVars(view: View)
@@ -80,8 +93,10 @@ class ProfileFragment : Fragment(), OnDialogDismissedListener {
         socialsView.setText(myUser.socials)
         passwordView.setText(myUser.password)
 
-        CoroutineScope(Dispatchers.Main).launch{ retrieveUserAdverts(false) }
-
+        CoroutineScope(Dispatchers.Main).launch{
+            retrieveUserAdverts(false)
+            advertsRetrieved = true
+        }
     }
 
     private fun setOnClickListeners()
@@ -145,6 +160,7 @@ class ProfileFragment : Fragment(), OnDialogDismissedListener {
         val adverts: List<Advert> = fetchUserAdverts(requireActivity(), myUser.id!!)
 
         if (adverts.isEmpty()) {
+            Log.e("E", "e")
             userAdvertsLayout.visibility = View.GONE
             withContext(Dispatchers.Main)
             {
@@ -155,6 +171,7 @@ class ProfileFragment : Fragment(), OnDialogDismissedListener {
 
         for(advert in adverts)
         {
+            Log.e("A", "a")
             val place = fetchPlace(advert.place)
             val type = fetchType(advert.type)
 
@@ -184,6 +201,8 @@ class ProfileFragment : Fragment(), OnDialogDismissedListener {
             }
 
             userAdvertsContainer.addView(resultView)
+
+            userAdvertsLayout.visibility = View.VISIBLE
 
             animateResultItem(resultView)
         }

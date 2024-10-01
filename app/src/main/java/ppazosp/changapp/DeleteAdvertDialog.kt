@@ -9,6 +9,7 @@ import androidx.fragment.app.DialogFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class DeleteAdvertDialog : DialogFragment() {
 
@@ -77,12 +78,17 @@ class DeleteAdvertDialog : DialogFragment() {
 
             LoadingScreen.show(requireActivity())
 
-            CoroutineScope(Dispatchers.Main).launch { deleteAdvert(requireContext(), user, place, sport) }
+            CoroutineScope(Dispatchers.Main).launch {
+                deleteAdvert(requireContext(), user, place, sport)
 
-            LoadingScreen.hide()
+                withContext(Dispatchers.Main) {
+                    LoadingScreen.hide()
 
-            listener?.onDialogDismissed()
-            dismiss()
+                    listener?.onDialogDismissed()
+                    dismiss()
+                }
+            }
+
         }
 
         cancelButton.setOnClickListener {

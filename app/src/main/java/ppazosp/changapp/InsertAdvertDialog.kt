@@ -15,7 +15,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
-import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,10 +32,10 @@ class InsertAdvertDialog : DialogFragment() {
     private var places: List<Place> = emptyList()
 
     private var spinnerPlaces: Spinner? = null
-    private var spinnerSports: Spinner? = null
+    private var spinnerTypes: Spinner? = null
 
     private var selectedPlaceID: Int = -1
-    private var selectedSportID: Int = -1
+    private var selectedTypeID: Int = -1
 
     private lateinit var title_input: TextInputEditText
     private lateinit var description_input: TextInputEditText
@@ -56,13 +55,13 @@ class InsertAdvertDialog : DialogFragment() {
 
     companion object {
         private const val ARG_PLACEID = "PLACE_KEY"
-        private const val ARG_SPORTID = "SPORT_KEY"
+        private const val ARG_TYPEID = "TYPE_KEY"
 
         fun newInstance(place: Int, sport: Int): InsertAdvertDialog {
             val dialog = InsertAdvertDialog()
             val args = Bundle().apply {
                 putInt(ARG_PLACEID, place)
-                putInt(ARG_SPORTID, sport)
+                putInt(ARG_TYPEID, sport)
             }
             dialog.arguments = args
             return dialog
@@ -77,7 +76,7 @@ class InsertAdvertDialog : DialogFragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             selectedPlaceID = it.getInt(ARG_PLACEID, -1)
-            selectedSportID = it.getInt(ARG_SPORTID, -1)
+            selectedTypeID = it.getInt(ARG_TYPEID, -1)
         }
     }
 
@@ -108,9 +107,7 @@ class InsertAdvertDialog : DialogFragment() {
         image_input = view.findViewById(R.id.pic_add)
 
         spinnerPlaces = view.findViewById(R.id.spinner_places)
-        spinnerSports = view.findViewById(R.id.spinner_sports)
-
-        fetchSpinners()
+        spinnerTypes = view.findViewById(R.id.spinner_sports)
 
         createButton = view.findViewById(R.id.delete_button)
         cancelButton = view.findViewById(R.id.cancel_button)
@@ -120,7 +117,7 @@ class InsertAdvertDialog : DialogFragment() {
 
     private fun setUI()
     {
-        fetchSpinners()
+        CoroutineScope(Dispatchers.Main).launch {fetchSpinners()}
     }
 
     private fun setOnClickListeners()
@@ -153,7 +150,7 @@ class InsertAdvertDialog : DialogFragment() {
                     image64 = Encripter.byteArrayToBase64(imageInput)
                 }
 
-                insertAdvert(requireContext(), InsertAdvert(myUser.id!!, spinnerSports!!.selectedItemPosition, spinnerPlaces!!.selectedItemPosition, titleText, descriptionText, image64, getFormattedDate()))
+                insertAdvert(requireContext(), InsertAdvert(myUser.id!!, spinnerTypes!!.selectedItemPosition, spinnerPlaces!!.selectedItemPosition, titleText, descriptionText, image64, getFormattedDate()))
 
                 withContext(Dispatchers.Main) {
                     LoadingScreen.hide()
@@ -178,20 +175,19 @@ class InsertAdvertDialog : DialogFragment() {
 
     private fun updateAdapters() {
 
-        val adapterProvincias = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, places.map { it.name })
-        adapterProvincias.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerPlaces?.adapter = adapterProvincias
+        val adapterPlaces = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, places.map { it.name })
+        adapterPlaces.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerPlaces?.adapter = adapterPlaces
         spinnerPlaces?.setSelection(selectedPlaceID)
 
-        val adapterSports = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, types.map { it.name })
-        adapterSports.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerSports?.adapter = adapterSports
-        spinnerSports?.setSelection(selectedSportID)
+        val adapterTypes = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, types.map { it.name })
+        adapterTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerTypes?.adapter = adapterTypes
+        spinnerTypes?.setSelection(selectedTypeID)
     }
 
-    private fun fetchSpinners()
+    private suspend fun fetchSpinners()
     {
-        CoroutineScope(Dispatchers.Main).launch {
             types = fetchTypes()
             places = fetchPlaces()
 
@@ -201,7 +197,6 @@ class InsertAdvertDialog : DialogFragment() {
             types = listOf(defaultType) + types
             places = listOf(defaultPlace) + places
 
-            if(isAdded) updateAdapters()
-        }
+            updateAdapters()
     }
 }

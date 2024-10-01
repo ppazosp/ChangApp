@@ -12,6 +12,8 @@ import ppazosp.changapp.databinding.ActivityMainBinding
 
 lateinit var myUser: User
 
+var firstView = true
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -31,6 +33,9 @@ class MainActivity : AppCompatActivity() {
         initializeVars()
 
         setUpViewPager()
+
+        firstView = false
+
     }
 
     private fun initializeVars()
