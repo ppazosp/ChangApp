@@ -153,8 +153,7 @@ class InsertAdvertDialog : DialogFragment() {
                     image64 = Encripter.byteArrayToBase64(imageInput)
                 }
 
-
-                insertAdvert(requireContext(), InsertAdvert(myUser.id!!, spinnerSports!!.selectedItemPosition, spinnerPlaces!!.selectedItemPosition, titleText, descriptionText, image64))
+                insertAdvert(requireContext(), InsertAdvert(myUser.id!!, spinnerSports!!.selectedItemPosition, spinnerPlaces!!.selectedItemPosition, titleText, descriptionText, image64, getFormattedDate()))
 
                 withContext(Dispatchers.Main) {
                     LoadingScreen.hide()

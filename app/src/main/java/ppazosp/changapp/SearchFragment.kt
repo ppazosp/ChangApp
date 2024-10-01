@@ -211,6 +211,7 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
             val titleView = resultView.findViewById<TextView>(R.id.title_view)
             val typePlaceView = resultView.findViewById<TextView>(R.id.type_place_view)
             val picView = resultView.findViewById<ImageView>(R.id.pic)
+            val dateView = resultView.findViewById<TextView>(R.id.dateView)
 
             val frameLayout = resultView.findViewById<FrameLayout>(R.id.linearLayout)
 
@@ -221,6 +222,7 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
             Log.e("Error", typePlace)
             typePlaceView.text = typePlace
             if (advert.image != null ) Encripter.setImageFromBase64(picView, advert.image)
+            dateView.text = advert.date
 
             if(advert.user == myUser.id)
             {

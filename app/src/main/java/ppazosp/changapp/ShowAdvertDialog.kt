@@ -29,6 +29,7 @@ class ShowAdvertDialog : DialogFragment() {
     private lateinit var fullnameView: TextView
     private lateinit var placeView: TextView
     private lateinit var typeView: TextView
+    private lateinit var dateView: TextView
 
     companion object {
         private const val ARG_ADVERTID = "USER_KEY"
@@ -72,6 +73,7 @@ class ShowAdvertDialog : DialogFragment() {
         fullnameView = view.findViewById(R.id.user_view)
         placeView = view.findViewById(R.id.place_view)
         typeView = view.findViewById(R.id.type_view)
+        dateView = view.findViewById(R.id.dateView)
 
         CoroutineScope(Dispatchers.Main).launch {
             advert = fetchAdvert(advertID)
@@ -94,6 +96,7 @@ class ShowAdvertDialog : DialogFragment() {
         fullnameView.text = user.fullname
         placeView.text = place.name
         typeView.text = type.name
+        dateView.text = advert.date
 
         if (advert.image != null ) Encripter.setImageFromBase64(imageView, advert.image)
         else imageView.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.default_image))

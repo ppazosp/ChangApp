@@ -1,6 +1,7 @@
 package ppazosp.changapp
 
 import android.content.Context
+import android.icu.text.SimpleDateFormat
 import android.util.Log
 import android.widget.Toast
 import io.github.jan.supabase.createSupabaseClient
@@ -8,7 +9,9 @@ import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.Clock.System.now
 import kotlinx.serialization.Serializable
+import java.util.Date
 
 
 const val SUPABASE_URL : String = "https://mapvepqvdgagccguault.supabase.co"
@@ -64,7 +67,8 @@ data class Advert(
     val place: Int,
     val title: String,
     val description: String,
-    val image: String?
+    val image: String?,
+    val date: String
 )
 
 @Serializable
@@ -74,7 +78,8 @@ data class InsertAdvert(
     val place: Int,
     val title: String,
     val description: String,
-    val image: String?
+    val image: String?,
+    val date: String
 )
 
 @Serializable
@@ -380,6 +385,12 @@ suspend fun fetchAdverts(context: Context, query: String): List<Advert>
     return adverts
 }
 
+fun getFormattedDate(): String
+{
+    val formatter = SimpleDateFormat("dd/MM 'a las' HH:mm")
+
+    return formatter.format(Date())
+}
 
 
 
