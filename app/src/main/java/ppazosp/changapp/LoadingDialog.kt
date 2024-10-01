@@ -20,7 +20,8 @@ class LoadingDialog : DialogFragment() {
     ): View? {
         val view = inflater.inflate(R.layout.dialog_loading, container, false)
         dialog?.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
-
+        dialog?.setCanceledOnTouchOutside(false)
+        dialog?.setCancelable(false)
 
         return view
     }

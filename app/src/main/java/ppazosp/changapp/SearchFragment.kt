@@ -135,7 +135,6 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
 
     override fun onDialogDismissed() {
         CoroutineScope(Dispatchers.Main).launch { search() }
-        Log.e("called", "called")
     }
 
     private fun setupSpinners() {
@@ -219,25 +218,15 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
 
             titleView.text = advert.title
             val typePlace = "${spinnerPlaces.getItemAtPosition(advert.place) as String} - ${spinnerTypes.getItemAtPosition(advert.type) as String}"
-            Log.e("Error", typePlace)
             typePlaceView.text = typePlace
             if (advert.image != null ) Encripter.setImageFromBase64(picView, advert.image)
             dateView.text = advert.date
 
-            if(advert.user == myUser.id)
-            {
-                frameLayout.setOnClickListener {
-                    val dialogDelete = DeleteAdvertDialog.newInstance(myUser.id!!, advert.place, advert.type)
-                    dialogDelete.setOnDialogDismissedListener(this)
-                    dialogDelete.show(childFragmentManager, "Eliminar anuncio")
-                }
-            }else
-            {
-                frameLayout.setOnClickListener {
-                    val dialogShowAdvert = ShowAdvertDialog.newInstance(advert.id)
-                    dialogShowAdvert.show(childFragmentManager, "Mostrar anuncio")
-                }
+            frameLayout.setOnClickListener {
+                val dialogShowAdvert = ShowAdvertDialog.newInstance(advert.id)
+                dialogShowAdvert.show(childFragmentManager, "Mostrar anuncio")
             }
+
 
             resultsContainer.addView(resultView)
 
@@ -256,7 +245,7 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
 
         resultItem.visibility = View.VISIBLE
 
-        resultItem.animate().scaleX(1f).setDuration(1000).start()
+        resultItem.animate().scaleX(1f).setDuration(500).start()
     }
 
 }

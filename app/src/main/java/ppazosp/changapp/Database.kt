@@ -9,7 +9,6 @@ import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock.System.now
 import kotlinx.serialization.Serializable
 import java.util.Date
 
@@ -80,23 +79,6 @@ data class InsertAdvert(
     val description: String,
     val image: String?,
     val date: String
-)
-
-@Serializable
-data class Message(
-    val id: Int,
-    val sender_id: Int,
-    val receiver_id: Int,
-    val advert_id: Int,
-    val seen: Boolean
-)
-
-@Serializable
-data class InsertMessage(
-    val sender_id: Int,
-    val receiver_id: Int,
-    val advert_id: Int,
-    val seen: Boolean
 )
 
 
@@ -325,65 +307,27 @@ suspend fun deleteUser(context: Context) : Boolean
     return true
 }
 
-suspend fun getMessages(context: Context): List<Message>
-{
-    var messages: List<Message> = emptyList()
-
-    try{
-        messages = supabase.from("messages").select {
-            filter {
-                Message::receiver_id eq myUser.id
-            }
-        }.decodeList<Message>()
-    }catch (e: Exception)
-    {
-        withContext(Dispatchers.Main)
-        {
-            ErrorHandler.showError(context, "No se pudieron recuperar los mensajes")
-        }
-        return messages
-    }
-
-    return messages
-}
-
-suspend fun sendResquest(context: Context, request: InsertMessage)
-{
-    try{
-        supabase.from("messages").insert(request)
-    }catch (e: Exception)
-    {
-        Log.e("Error", e.message.toString())
-        withContext(Dispatchers.Main)
-        {
-            ErrorHandler.showError(context, "No se pudo enviar la solicitud")
-        }
-    }
-}
-
-suspend fun fetchAdverts(context: Context, query: String): List<Advert>
+suspend fun fetchUserAdverts(context: Context, id: Int): List<Advert>
 {
     var adverts: List<Advert> = emptyList()
 
     try{
-        adverts = supabase.from("advert").select {
+        adverts = supabase.from("adverts").select {
             filter {
-                Advert::title like "%$query%"
-                or { Advert::description like "%$query"}
+                Advert:: user eq id
             }
-        }.decodeList()
-
+        }.decodeList<Advert>()
     }catch (e: Exception)
     {
-        Log.e("Error", e.message.toString())
         withContext(Dispatchers.Main)
         {
-            ErrorHandler.showError(context, "No se ha podido realizar la búsqueda")
+            ErrorHandler.showError(context, "No se pudieron recuperar tus anuncios")
         }
+        return adverts
     }
-
     return adverts
 }
+
 
 fun getFormattedDate(): String
 {
