@@ -81,13 +81,13 @@
                 app:layout_constraintTop_toBottomOf="@+id/spinner_provincia" />
 
             <ImageView
-                android:id="@+id/imageView_sports"
+                android:id="@+id/imageView_types"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="10dp"
-                android:src="@drawable/baseline_sports_basketball_24"
+                android:src="@drawable/baseline_local_fire_department_24"
                 app:layout_constraintEnd_toStartOf="@+id/spinner_activity"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView_location" />

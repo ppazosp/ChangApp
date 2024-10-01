@@ -47,31 +47,10 @@
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Small" />
 
             <TextView
-                android:id="@+id/name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:gravity="center|top"
-                android:singleLine="false"
-                android:text="XXX"
-                android:textColor="@color/white"
-                android:textSize="10sp" />
-
-            <TextView
-                android:id="@+id/socials"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:gravity="center|bottom"
-                android:singleLine="true"
-                android:text="\xxx"
-                android:textColor="@color/white"
-                android:textSize="10sp" />
-
-            <TextView
                 android:id="@+id/place"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:gravity="center|top"
                 android:singleLine="false"
                 android:text="XXX"

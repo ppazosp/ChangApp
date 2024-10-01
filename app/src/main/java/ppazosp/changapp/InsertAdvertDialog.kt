@@ -29,7 +29,7 @@ class InsertAdvertDialog : DialogFragment() {
 
     private var listener: OnDialogDismissedListener? = null
 
-    private var sports: List<Sport> = emptyList()
+    private var types: List<Type> = emptyList()
     private var places: List<Place> = emptyList()
 
     private var spinnerPlaces: Spinner? = null
@@ -88,7 +88,7 @@ class InsertAdvertDialog : DialogFragment() {
         val view = inflater.inflate(R.layout.dialog_insert_advert, container, false)
         dialog?.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
 
-        LoadingScreen.show(requireContext())
+        LoadingScreen.show(requireActivity())
 
         initializeVars(view)
 
@@ -142,7 +142,7 @@ class InsertAdvertDialog : DialogFragment() {
 
                 withContext(Dispatchers.Main)
                 {
-                    LoadingScreen.show(requireContext())
+                    LoadingScreen.show(requireActivity())
                 }
 
                 var imageInput: ByteArray? = null
@@ -184,7 +184,7 @@ class InsertAdvertDialog : DialogFragment() {
         spinnerPlaces?.adapter = adapterProvincias
         spinnerPlaces?.setSelection(selectedPlaceID)
 
-        val adapterSports = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, sports.map { it.name })
+        val adapterSports = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, types.map { it.name })
         adapterSports.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerSports?.adapter = adapterSports
         spinnerSports?.setSelection(selectedSportID)
@@ -193,30 +193,16 @@ class InsertAdvertDialog : DialogFragment() {
     private fun fetchSpinners()
     {
         CoroutineScope(Dispatchers.Main).launch {
-            sports = fetchSports()
+            types = fetchTypes()
             places = fetchPlaces()
 
-            val defaultSport = Sport(id = -1, name = "--Seleccionar--")
+            val defaultType = Type(id = -1, name = "--Seleccionar--")
             val defaultPlace = Place(id = -1, name = "--Seleccionar--")
 
-            sports = listOf(defaultSport) + sports
+            types = listOf(defaultType) + types
             places = listOf(defaultPlace) + places
 
             if(isAdded) updateAdapters()
-        }
-    }
-
-    private suspend fun fetchSports(): List<Sport>
-    {
-        return withContext(Dispatchers.IO) {
-            supabase.from("sports").select().decodeList<Sport>()
-        }
-    }
-
-    private suspend fun fetchPlaces(): List<Place>
-    {
-        return withContext(Dispatchers.IO) {
-            supabase.from("places").select().decodeList<Place>()
         }
     }
 }

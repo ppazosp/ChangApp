@@ -35,7 +35,7 @@ class ProfileFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_profile, container, false)
 
-        LoadingScreen.show(requireContext())
+        LoadingScreen.show(requireActivity())
 
         initializeVars(view)
 
@@ -78,7 +78,7 @@ class ProfileFragment : Fragment() {
                 CoroutineScope(Dispatchers.Main).launch {
                     withContext(Dispatchers.Main)
                     {
-                        LoadingScreen.show(requireContext())
+                        LoadingScreen.show(requireActivity())
                     }
                     updateUser()
                     withContext(Dispatchers.Main)

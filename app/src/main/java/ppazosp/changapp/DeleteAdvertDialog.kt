@@ -78,7 +78,7 @@ class DeleteAdvertDialog : DialogFragment() {
     {
         deleteButton.setOnClickListener {
 
-            LoadingScreen.show(requireContext())
+            LoadingScreen.show(requireActivity())
 
             CoroutineScope(Dispatchers.Main).launch { deleteAdvert(requireContext(), user, place, sport) }
 

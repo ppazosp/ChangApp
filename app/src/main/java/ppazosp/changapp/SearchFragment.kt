@@ -1,9 +1,6 @@
 package ppazosp.changapp
 
 import android.animation.ValueAnimator
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -30,11 +27,11 @@ import kotlinx.coroutines.withContext
 
 class SearchFragment : Fragment(), OnDialogDismissedListener {
 
-    private var sports: List<Sport> = emptyList()
+    private var types: List<Type> = emptyList()
     private var places: List<Place> = emptyList()
 
     private lateinit var selectedPlace: Place
-    private lateinit var selectedSport: Sport
+    private lateinit var selectedType: Type
 
     private lateinit var spinnerPlaces: Spinner
     private lateinit var spinnerSports: Spinner
@@ -42,7 +39,7 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
     private lateinit var miniframe: FrameLayout
 
     private lateinit var fab: FloatingActionButton
-    
+
     private lateinit var resultsContainer: LinearLayout
 
     private lateinit var resultsContainerScroll: ScrollView
@@ -60,7 +57,7 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
 
         val view = inflater.inflate(R.layout.fragment_search, container, false)
 
-        LoadingScreen.show(requireContext())
+        LoadingScreen.show(requireActivity())
 
         initializeVars(view)
 
@@ -110,7 +107,7 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
         }
 
         fab.setOnClickListener {
-            val dialogInsert = InsertAdvertDialog.newInstance(selectedPlace.id, selectedSport.id)
+            val dialogInsert = InsertAdvertDialog.newInstance(selectedPlace.id, selectedType.id)
             dialogInsert.setOnDialogDismissedListener(this)
             dialogInsert.show(childFragmentManager, "Crear anuncio")
         }
@@ -153,7 +150,7 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
 
         spinnerSports.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                selectedSport = sports[position]
+                selectedType = types[position]
 
                 if (firstSearchDone) { CoroutineScope(Dispatchers.Main).launch { search() } }
             }
@@ -168,7 +165,7 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
         spinnerPlaces.adapter = adapterProvincias
         spinnerPlaces.setSelection(0)
 
-        val adapterSports = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, sports.map { it.name })
+        val adapterSports = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, types.map { it.name })
         adapterSports.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerSports.adapter = adapterSports
         spinnerSports.setSelection(0)
@@ -177,13 +174,13 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
     private fun fillSpinners()
     {
         CoroutineScope(Dispatchers.Main).launch {
-            sports = fetchSports()
+            types = fetchTypes()
             places = fetchPlaces()
 
-            val defaultSport = Sport(id = -1, name = "--Seleccionar--")
+            val defaultType = Type(id = -1, name = "--Seleccionar--")
             val defaultPlace = Place(id = -1, name = "--Seleccionar--")
 
-            sports = listOf(defaultSport) + sports
+            types = listOf(defaultType) + types
             places = listOf(defaultPlace) + places
 
             if(isAdded) updateAdapters()
@@ -194,14 +191,14 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
     {
         withContext(Dispatchers.Main)
         {
-            LoadingScreen.show(requireContext())
+            LoadingScreen.show(requireActivity())
         }
 
         resultsContainer.removeAllViews()
 
         val query = queryView.text.toString()
 
-        val adverts: List<Advert> = fetchAdverts(query, selectedPlace, selectedSport)
+        val adverts: List<Advert> = fetchAdverts(query, selectedPlace, selectedType)
         for(advert in adverts)
         {
             val user = fetchUser(advert.user)
@@ -212,8 +209,6 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
 
             val titleView = resultView.findViewById<TextView>(R.id.username)
             val descriptionView = resultView.findViewById<TextView>(R.id.last_message)
-            val fullnameView = resultView.findViewById<TextView>(R.id.name)
-            val socialsView = resultView.findViewById<TextView>(R.id.socials)
             val placeView = resultView.findViewById<TextView>(R.id.place)
             val picView = resultView.findViewById<ImageView>(R.id.pic)
 
@@ -223,22 +218,21 @@ class SearchFragment : Fragment(), OnDialogDismissedListener {
 
             titleView.text = advert.title
             descriptionView.text = advert.description
-            fullnameView.text = user.fullname
-            val socialsText = "@" + user.socials
-            socialsView.text = socialsText
             placeView.text = spinnerPlaces.getItemAtPosition(advert.place) as String
             if (advert.image != null ) Encripter.setImageFromBase64(picView, advert.image)
 
             if(advert.user == myUser.id)
             {
                 linerLayout.setOnClickListener {
-                    val dialogDelete = DeleteAdvertDialog.newInstance(myUser.id!!, advert.place, advert.sport)
+                    val dialogDelete = DeleteAdvertDialog.newInstance(myUser.id!!, advert.place, advert.type)
                     dialogDelete.setOnDialogDismissedListener(this)
                     dialogDelete.show(childFragmentManager, "Eliminar anuncio")
                 }
             }else
             {
                 linerLayout.setOnClickListener {
+                    val dialogShowAdvert = ShowAdvertDialog.newInstance(advert.id)
+                    dialogShowAdvert.show(childFragmentManager, "Mostrar anuncio")
                 }
             }
 

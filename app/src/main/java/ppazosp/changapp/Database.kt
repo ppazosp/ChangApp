@@ -6,7 +6,6 @@ import android.widget.Toast
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
-import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
@@ -46,7 +45,7 @@ data class User(
 )
 
 @Serializable
-data class Sport(
+data class Type(
     val id: Int,
     val name: String
 )
@@ -61,7 +60,7 @@ data class Place(
 data class Advert(
     val id: Int,
     val user: Int,
-    val sport: Int,
+    val type: Int,
     val place: Int,
     val title: String,
     val description: String,
@@ -71,7 +70,7 @@ data class Advert(
 @Serializable
 data class InsertAdvert(
     val user: Int,
-    val sport: Int,
+    val type: Int,
     val place: Int,
     val title: String,
     val description: String,
@@ -96,10 +95,10 @@ data class InsertMessage(
 )
 
 
-suspend fun fetchSports(): List<Sport>
+suspend fun fetchTypes(): List<Type>
 {
     return withContext(Dispatchers.IO) {
-        supabase.from("sports").select().decodeList<Sport>()
+        supabase.from("types").select().decodeList<Type>()
     }
 }
 
@@ -110,10 +109,10 @@ suspend fun fetchPlaces(): List<Place>
     }
 }
 
-suspend fun fetchAdverts(query: String, selectedPlace: Place?, selectedSport: Sport?): List<Advert> {
+suspend fun fetchAdverts(query: String, selectedPlace: Place?, selectedType: Type?): List<Advert> {
     return withContext(Dispatchers.IO) {
         when {
-            selectedPlace?.id == -1 && selectedSport?.id == -1 -> {
+            selectedPlace?.id == -1 && selectedType?.id == -1 -> {
                 supabase.from("adverts").select{
                     filter {
                         or {
@@ -127,7 +126,7 @@ suspend fun fetchAdverts(query: String, selectedPlace: Place?, selectedSport: Sp
                 supabase.from("adverts").select {
                     filter {
                         and {
-                            Advert::sport eq selectedSport?.id
+                            Advert::type eq selectedType?.id
 
                             or {
                                 Advert::title ilike "%$query%"
@@ -137,7 +136,7 @@ suspend fun fetchAdverts(query: String, selectedPlace: Place?, selectedSport: Sp
                     }
                 }.decodeList<Advert>()
             }
-            selectedSport?.id == -1 -> {
+            selectedType?.id == -1 -> {
                 supabase.from("adverts").select {
                     filter {
                         and {
@@ -154,7 +153,7 @@ suspend fun fetchAdverts(query: String, selectedPlace: Place?, selectedSport: Sp
                     filter {
                         and {
                             and {
-                                Advert::sport eq selectedSport?.id
+                                Advert::type eq selectedType?.id
                                 Advert::place eq selectedPlace?.id
                             }
 
@@ -176,6 +175,14 @@ suspend fun fetchUser(id: Int): User
         supabase.from("users").select{filter { User::id eq id  }}.decodeSingle()
     }
 }
+
+suspend fun fetchPlace(id: Int): Place
+{
+    return withContext(Dispatchers.IO) {
+        supabase.from("places").select{filter { Place::id eq id  }}.decodeSingle()
+    }
+}
+
 
 suspend fun fetchAdvert(id: Int): Advert
 {
@@ -267,7 +274,7 @@ suspend fun deleteAdvert(context: Context, user: Int, place: Int, sport: Int) {
                 and {
                     Advert::place eq place
                     and {
-                        Advert::sport eq sport
+                        Advert::type eq sport
                     }
                 }
             }

@@ -43,7 +43,7 @@ class DeleteUserDialog : DialogFragment() {
     private fun setOnClickListeners()
     {
         deleteButton.setOnClickListener {
-            LoadingScreen.show(requireContext())
+            LoadingScreen.show(requireActivity())
             CoroutineScope(Dispatchers.Main).launch {
                 if (deleteUser(requireContext())){
                     withContext(Dispatchers.Main)
