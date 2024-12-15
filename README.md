@@ -23,7 +23,7 @@ Users can explore ads created by others, filter them by location and theme, and 
 
 ---
 
-## Screenshots
+## Insights
 
 | Screen             | Description                              | Screenshot                                                                 |
 |--------------------|------------------------------------------|----------------------------------------------------------------------------|
