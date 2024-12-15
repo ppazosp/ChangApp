@@ -27,7 +27,7 @@ Users can explore ads created by others, filter them by location and theme, and 
 
 | Screen             | Description                              | Screenshot                                                                 |
 |--------------------|------------------------------------------|----------------------------------------------------------------------------|
-| **Login Screen**   | The login screen where users can register or log in. |  <div align="center"><img src="wid![login](https://github.com/user-attachments/assets/1ace90d9-99a1-4178-9452-c2fa314842e6)" width="150" /></div> |
+| **Login Screen**   | The login screen where users can register or log in. |  <div align="center"><img src="![login](https://github.com/user-attachments/assets/1ace90d9-99a1-4178-9452-c2fa314842e6)" width="150" /></div> |
 | **Create Ad**     | Screen where users can create their own ads.   |  <div align="center"><img src="![create](https://github.com/user-attachments/assets/c0066a3f-578d-46f9-8d35-7829a42a3825)" width="150" /></div>                       |
 | **Browse Ads**     | Screen where users can search and browse ads.   |  <div align="center"><img src="![search](https://github.com/user-attachments/assets/e839b7fc-5f30-4d67-a3d8-650727f10e93)" width="150" /></div>                       |
 | **Profile**     | Screen where users can modify their account and delete their own ads.   |  <div align="center"><img src=""![profile](https://github.com/user-attachments/assets/55c32172-e810-4162-8de0-873d6781214a)" width="150" /></div>                       |
