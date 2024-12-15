@@ -36,5 +36,5 @@ Users can explore ads created by others, filter them by location and theme, and 
 ## Technologies Used
 
 - **Language:** [Kotlin](https://kotlinlang.org/)
-- **Development Environment:** Android Studio
-- **Database:** Supabase
+- **Development Environment:** [Android Studio](https://developer.android.com/studio)
+- **Database:** [Supabase](https://supabase.com)
