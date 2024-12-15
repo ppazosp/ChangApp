@@ -13,8 +13,8 @@ import kotlinx.serialization.Serializable
 import java.util.Date
 
 
-const val SUPABASE_URL : String = "https://mapvepqvdgagccguault.supabase.co"
-const val SUPABASE_API_KEY : String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hcHZlcHF2ZGdhZ2NjZ3VhdWx0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcyNzAyNjQ1NSwiZXhwIjoyMDQyNjAyNDU1fQ.WT754nds11_TpqM3by8cAbbFzSjTK-yybYU3SPDalGw"
+const val SUPABASE_URL : String = "x"
+const val SUPABASE_API_KEY : String = "x"
 
 val supabase = createSupabaseClient(
     supabaseUrl = SUPABASE_URL,
